@@ -1,7 +1,7 @@
 import requests
 import json
 import time
-
+from parcer.embedder import embed_courses
 
 def fetch_top_stepik_courses(pages_to_fetch=5):
     all_courses = []
@@ -47,6 +47,13 @@ def fetch_top_stepik_courses(pages_to_fetch=5):
                     continue
                 course_clean_tags.append(tag_response.json()['tags'][0]['title'])
             clean_course["tags"] = course_clean_tags
+            text_to_embed = f"""Title: {clean_course["title"]}
+Description: {clean_course["summary"]}
+Difficulty: {clean_course["difficulty"]}
+Workload: {clean_course["workload"]}
+Tags: {clean_course["tags"]}"""
+            embeded_text = embed_courses(text_to_embed)
+            clean_course["embedding"] = embeded_text
             all_courses.append(clean_course)
             print("Done fetching")
 

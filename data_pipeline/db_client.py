@@ -28,6 +28,7 @@ def insert_courses(courses: dict):
                     "updated_at": current_time,
                     "is_paid": course["is_paid"],
                     "price": course["price"],
+                    "embedding": course["embedding"],
                 }, on_conflict='stepik_id'
             ).execute()
             success_count += 1

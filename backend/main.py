@@ -27,7 +27,7 @@ def get_recommend_baseline(
     try:
         query = supabase.table("courses").select("id, title, summary, url, difficulty, learners_count, rating, tags")
         if tag:
-            query = query.ilike("tags", f"%{tag}%")
+            query = query.contains("tags",tag.split())
         response = query.order("learners_count",desc=True).limit(limit).execute()
         return {"algorithm": "baseline",
                 "results_count":len(response.data),
