@@ -1,5 +1,5 @@
+import json
 from datetime import datetime, timezone
-import pandas as pd
 from supabase import create_client, Client
 import os
 from dotenv import load_dotenv
@@ -36,5 +36,27 @@ def insert_courses(courses: dict):
             print(e)
             print(course)
     print(f"Loaded {success_count} courses")
+
+
+def get_courses(pages_to_fetch:int = 5, course_on_page:int = 20):
+    try:
+        limit = pages_to_fetch * course_on_page
+        courses = supabase.table('courses').select('stepik_id,title,summary,url,difficulty,learners_count,rating,tags,is_paid,price').limit(limit).execute().data
+        clean_courses = []
+        for page in range(pages_to_fetch):
+            for course_num in range(course_on_page):
+                list_course = course_on_page*page+course_num
+                clean_courses.append({"course_num": list_course+1, "page": page+1, "course": courses[list_course]})
+        return clean_courses
+    except Exception as e:
+        pass
+
+def get_updating_date():
+    try:
+        date = supabase.table("courses").select("updated_at").order("updated_at",desc=True).limit(1).execute().data
+        return datetime.fromisoformat(date[0]["updated_at"])
+    except Exception as e:
+        print(e)
+
 
 
