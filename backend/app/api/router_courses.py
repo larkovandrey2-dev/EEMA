@@ -1,26 +1,10 @@
 from typing import Optional
 
-from fastapi import FastAPI, Query
-from supabase import create_client, Client
-from dotenv import load_dotenv
-import os
+from fastapi import APIRouter, Query
+from app.core.database import supabase
 
-load_dotenv()
-
-supabase: Client = create_client(
-    os.environ.get("SUPABASE_URL"),
-    os.environ.get("SUPABASE_KEY"),
-)
-
-app = FastAPI(
-    title="EEMA RecSys",
-    version="1.0",
-)
-@app.get("/")
-def read_root():
-    return {"status": "ok"}
-
-@app.get("/api/recommend/baseline")
+router = APIRouter(prefix="/api/courses", tags=["Courses"])
+@router.get("/recommend/baseline")
 def get_recommend_baseline(
         tag: Optional[str] = Query(None, description="Фильтр по тегу"),
         limit: int = Query(10, description="Кол-во курсов в рекомендации")):
