@@ -1,4 +1,3 @@
-import json
 from datetime import datetime, timezone
 from supabase import create_client, Client
 import os
