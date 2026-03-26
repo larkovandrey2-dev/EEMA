@@ -1,6 +1,6 @@
 import os
 import jwt
-from fastapi import HTTPException, Header, Depends
+from fastapi import HTTPException, Depends
 from dotenv import load_dotenv
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 

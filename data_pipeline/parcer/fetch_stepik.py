@@ -1,5 +1,4 @@
 import requests
-import json
 import time
 from parcer.embedder import embed_courses
 
@@ -38,6 +37,7 @@ def fetch_top_stepik_courses(pages_to_fetch=5):
                 "price": course["price"],
 
             }
+            print(clean_course)
             course_clean_tags = []
             tags = course.get("tags", [])
             for tag in tags:
@@ -65,5 +65,6 @@ Tags: {clean_course["tags"]}"""
             break
 
     return all_courses
+
 
 

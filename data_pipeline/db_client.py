@@ -58,4 +58,3 @@ def get_updating_date():
         print(e)
 
 
-
