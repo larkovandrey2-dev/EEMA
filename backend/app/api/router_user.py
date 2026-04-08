@@ -1,14 +1,53 @@
 import uuid
 from datetime import datetime, timedelta
-
+import json
 import jwt
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from app.core.database import supabase
 from app.schemas.models import UserPreferences, TextInput
 from app.core.security import get_current_user_id
+from services.llm_request import ask_yagpt
 import os
 
 router = APIRouter(prefix="/api/users", tags=["Users"])
+
+
+
+@router.post("/parse-skills")
+def parse_text_to_skills(user_text: TextInput):
+    system_prompt = """
+        Ты AI-ассистент образовательной IT-платформы. 
+        Твоя задача — извлечь ВСЕ упомянутые ИТ-навыки, технологии и цели из текста пользователя.
+        Нормализуй сленг (например: "питон" -> "Python").
+
+        УРОВНИ НАВЫКОВ:
+        - "beginner" (низкий, основы)
+        - "medium" (средний, пишу около года)
+        - "high" (высокий, эксперт)
+
+        ВЕРНИ СТРОГО JSON в таком формате (БЕЗ разметки Markdown):
+        {
+            "skills": {
+                "Python": "medium",
+                "PostgreSQL": "beginner"
+            },
+            "learning_goals": ["FastAPI", "Docker"]
+        }
+        """
+    try:
+        raw_text = ask_yagpt(system_prompt=system_prompt, user_text=user_text.text, temperature=0.0)
+        clean_result = raw_text.replace("```json", "").replace("```", "").strip()
+        parsed_data = json.loads(clean_result)
+
+        return {
+            "status": "success",
+            "data": parsed_data
+        }
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Модель вернула текст, а не JSON")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/profile")
 def update_profile(
