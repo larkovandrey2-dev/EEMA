@@ -3,7 +3,8 @@ import { ALL_SKILLS, Skill, SkillLevel } from "./utils/types";
 import { useState, useEffect } from 'react';
 import { ChevronRight } from "lucide-react";
 import "./skill-form.css"
-
+import { ProfileParams } from "../../shared";
+import { profileApi } from "../../shared/index";
 
 
 
@@ -42,9 +43,21 @@ export const SkillForm: React.FC = () => {
         }));
     };
 
+    const converter = (): ProfileParams => {
+        const skillsMap: Record<string, string> = {}
+
+        profile.skills.forEach((skill) => {
+          skillsMap[skill.name] = skill.level
+        })
+        return {
+            skills: skillsMap,
+            learning_goals: [profile.customDescription],
+            time_per_week: "medium"
+        }
+    }
     const handleRefresh = () => {
         console.log("Saving profile:", profile);
-        //сделать
+        profileApi.updateProfile(converter());
     };
 
     const isInvalid = profile.skills.length === 0 && !profile.customDescription.trim();

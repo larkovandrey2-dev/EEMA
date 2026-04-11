@@ -1,10 +1,14 @@
 import { SkillForm } from '../../features';
+import { ThemeButton } from '../../shared';
 import "./onboarding.css";
 
-function Onboarding() {
+const Onboarding = () => {
   return (
     <div className="onboarding-page">
     <div className="onboarding-container">
+        <div className="theme-block">
+          <ThemeButton/>
+        </div>
         <h1 className="brand-title">EEMA</h1>
         <p className="page-subtitle">Что умеешь?</p> 
         <div className="legend">
