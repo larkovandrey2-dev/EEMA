@@ -1,10 +1,17 @@
 from fastapi import FastAPI
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.api import router_user,router_courses, router_auth
 
 app = FastAPI(
     title="EEMA RecSys",
     version="1.0",
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 app.include_router(router_user.router)
 app.include_router(router_courses.router)
