@@ -2,8 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Query, HTTPException
 from fastapi.params import Depends
-from numpy.ma.extras import unique
-
+from datetime import datetime, timezone
 from app.core.security import get_current_user_id
 from app.core.database import supabase
 
@@ -62,3 +61,46 @@ def get_recommend_baseline(
 
     except Exception as e:
         raise e
+
+
+@router.post("/{course_id}/like")
+def like_course(
+        course_id: int,
+        user_id: str = Depends(get_current_user_id)
+):
+    try:
+        course_check = supabase.table("courses").select("id").eq("id", course_id).execute()
+        if not course_check.data:
+            raise HTTPException(status_code=404, detail="Курс не найден")
+        supabase.table("user_likes").insert({
+            "user_id": user_id,
+            "course_id": course_id,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }).execute()
+
+        return {"status": "success", "message": "Курс добавлен в избранное"}
+
+    except Exception as e:
+        if "duplicate key value" in str(e).lower() or "23505" in str(e):
+            return {"status": "info", "message": "Вы уже лайкнули этот курс"}
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/{course_id}/like")
+def unlike_course(
+        course_id: int,
+        user_id: str = Depends(get_current_user_id)
+):
+    try:
+        response = supabase.table("user_likes") \
+            .delete() \
+            .eq("user_id", user_id) \
+            .eq("course_id", course_id) \
+            .execute()
+
+        if not response.data:
+            return {"status": "info", "message": "Лайк не был поставлен ранее"}
+
+        return {"status": "success", "message": "Курс удален из избранного"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
