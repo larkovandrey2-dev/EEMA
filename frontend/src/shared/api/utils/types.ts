@@ -28,3 +28,20 @@ export type ProfileParams = {
   learning_goals: string[]
   time_per_week: "low" | "medium" | "high"
 }
+
+export type Course = {
+  id: number;
+  title: string;
+  url: string;
+  difficulty: "easy" | "normal" | "hard" | null;
+  is_paid: boolean;
+  price: number | null;
+  learners_count: number;
+};
+
+export type BaselineResponse = {
+  strategy: string;
+  topics_used: string[];
+  results_count: number;
+  courses: Course[];
+};

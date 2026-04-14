@@ -5,12 +5,14 @@ import { ChevronRight } from "lucide-react";
 import "./skill-form.css"
 import { ProfileParams } from "../../shared";
 import { profileApi } from "../../shared/index";
+import { useNavigate } from "react-router-dom";
 
 
 
 
 export const SkillForm: React.FC = () => {
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         //сделать
@@ -82,7 +84,14 @@ export const SkillForm: React.FC = () => {
             <footer className="form-footer">
                 <button 
                     className="submit-btn" 
-                    onClick={handleRefresh}
+                    onClick={() => {
+                        try {
+                            handleRefresh()
+                            navigate("/home")
+                        } catch (error) {
+                            console.error("Error occurred while saving profile:", error);
+                        }
+                    }}
                     disabled={isInvalid}
                 >
                     Начать <ChevronRight size={20} />

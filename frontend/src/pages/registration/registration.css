@@ -1,0 +1,153 @@
+:root {
+  color-scheme: light dark;
+}
+
+.auth-wrapper {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background: light-dark(#f3f4f6, #0f172a);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 1024px;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100dvh;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.auth-top {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 16px 0;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 380px;
+
+  margin: auto;
+
+  padding: 32px;
+  border-radius: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  background: light-dark(#ffffff, #1e293b);
+  box-shadow: 0 10px 25px light-dark(rgba(0,0,0,0.05), rgba(0,0,0,0.4));
+
+  box-sizing: border-box;
+}
+
+.auth-title {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+
+  color: light-dark(#1f2937, #e5e7eb);
+}
+
+.auth-input {
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+
+  outline: none;
+
+  color: light-dark(#111827, #e5e7eb);
+  background: light-dark(#ffffff, #0f172a);
+
+  border: 1px solid light-dark(#e5e7eb, #334155);
+
+  transition: 0.2s ease;
+}
+
+.auth-input::placeholder {
+  color: light-dark(#9ca3af, #64748b);
+}
+
+.auth-input:focus {
+  border-color: light-dark(#8b5cf6, #a78bfa);
+  box-shadow: 0 0 0 3px light-dark(
+    rgba(139, 92, 246, 0.15),
+    rgba(167, 139, 250, 0.2)
+  );
+}
+
+.auth-button {
+  margin-top: 8px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+
+  cursor: pointer;
+
+  font-size: 15px;
+  font-weight: 500;
+  color: white;
+
+  background: linear-gradient(
+    90deg,
+    light-dark(#8b5cf6, #a78bfa),
+    light-dark(#6366f1, #818cf8)
+  );
+
+  transition: 0.2s ease;
+}
+
+.auth-button:hover {
+  opacity: 0.9;
+}
+
+.auth-button:active {
+  transform: scale(0.98);
+}
+
+.auth-switch {
+  margin-top: 4px;
+
+  background: none;
+  border: none;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  text-align: center;
+
+  color: light-dark(#6b7280, #94a3b8);
+
+  transition: 0.2s ease;
+}
+
+.auth-switch:hover {
+  color: light-dark(#8b5cf6, #a78bfa);
+}
+
+.auth-switch:active {
+  transform: scale(0.97);
+}
+
+/* ===== MOBILE FIXES ===== */
+@media (max-width: 480px) {
+  .auth-form {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .auth-title {
+    font-size: 20px;
+  }
+
+  .auth-top {
+    padding: 12px 0;
+  }
+}
