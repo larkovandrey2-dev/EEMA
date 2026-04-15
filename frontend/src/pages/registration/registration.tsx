@@ -7,16 +7,20 @@ import { ThemeButton } from "../../shared";
 const RegistrationPage = () => {
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
+    const [loading, setLoading] = React.useState(false)
     const navigate = useNavigate()
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        setLoading(true);
         try{
             await auth.register({email, password})
             await auth.login({email, password})
             navigate("/", { replace: true })
         } catch (e) {
             console.log("login error", e)
+        } finally {
+            setLoading(false)
         }
     }
     return (
@@ -43,7 +47,7 @@ const RegistrationPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />      
-            <button type="submit" className="auth-button">
+            <button type="submit" className="auth-button" disabled={loading}>
                 Зарегистрироваться
             </button>
             <button

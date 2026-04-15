@@ -6,12 +6,14 @@ import "./skill-form.css"
 import { ProfileParams } from "../../shared";
 import { profileApi } from "../../shared/index";
 import { useNavigate } from "react-router-dom";
+import { ProfileParseResponse } from "../../shared/api/utils/types";
 
 
 
 
 export const SkillForm: React.FC = () => {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    // const [parsedDescription, setParsedDescription] = useState<ProfileParseResponse | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -45,22 +47,43 @@ export const SkillForm: React.FC = () => {
         }));
     };
 
-    const converter = (): ProfileParams => {
+    const parseSkills = async () => {
+            const res = await profileApi.parseSkills(profile.customDescription)
+            return res
+        }
+
+    const converter = (parsedDescription: ProfileParseResponse): ProfileParams => {
         const skillsMap: Record<string, string> = {}
 
         profile.skills.forEach((skill) => {
           skillsMap[skill.name] = skill.level
         })
+
         return {
-            skills: skillsMap,
-            learning_goals: [profile.customDescription],
+            skills: {...parsedDescription?.data.skills, ...skillsMap},
+            learning_goals: parsedDescription?.data.learning_goals || [],
             time_per_week: "medium"
         }
     }
-    const handleRefresh = () => {
-        console.log("Saving profile:", profile);
-        profileApi.updateProfile(converter());
+    const handleRefresh = (parsedDescription: ProfileParseResponse) => {
+        const data = converter(parsedDescription)
+        console.log("Saving profile:", data);
+        profileApi.updateProfile(data);
     };
+
+    const handleSubmit = async () => {
+        setLoading(true)
+        try {
+            if (!loading){
+                const parsed: ProfileParseResponse = await parseSkills()
+                await handleRefresh(parsed)
+                navigate("/home")
+            }
+        } catch (error) {
+            console.error("Error occurred while saving profile:", error);
+        }
+        setLoading(false)
+    }
 
     const isInvalid = profile.skills.length === 0 && !profile.customDescription.trim();
 
@@ -84,15 +107,8 @@ export const SkillForm: React.FC = () => {
             <footer className="form-footer">
                 <button 
                     className="submit-btn" 
-                    onClick={() => {
-                        try {
-                            handleRefresh()
-                            navigate("/home")
-                        } catch (error) {
-                            console.error("Error occurred while saving profile:", error);
-                        }
-                    }}
-                    disabled={isInvalid}
+                    onClick={handleSubmit}
+                    disabled={isInvalid || loading}
                 >
                     Начать <ChevronRight size={20} />
                 </button>

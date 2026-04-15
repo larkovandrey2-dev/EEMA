@@ -1,3 +1,5 @@
+import { SkillLevel } from "../../../features/skill-group/utils/types"
+
 export type AuthParams = {
   email: string
   password: string
@@ -45,3 +47,14 @@ export type BaselineResponse = {
   results_count: number;
   courses: Course[];
 };
+
+export type ProfileParseResponse = {
+  status: string;
+  data: {
+    skills: Record<string, SkillLevel>;
+    learning_goals: string[];
+  };
+};
+export type ProfileParseParams = {
+  text: string
+}

@@ -112,6 +112,13 @@
   transform: scale(0.98);
 }
 
+.auth-button:disabled {
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 .auth-switch {
   margin-top: 4px;
 

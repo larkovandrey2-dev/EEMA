@@ -22,7 +22,7 @@ export const CourseBlock = () => {
     }, []);
     return (
         <div>
-            {!!baseline ? <CourseGroup courses={baseline?.courses}></CourseGroup>: <p>Нет рекомендаций для отображения</p>}
+            {loading ? <p>Загрузка...</p> : !!baseline ? <CourseGroup courses={baseline?.courses}></CourseGroup>: <p>Нет рекомендаций для отображения</p>}
         </div>
     );
 }

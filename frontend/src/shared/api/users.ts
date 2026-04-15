@@ -1,10 +1,17 @@
 import { $api } from "./utils/axios"
-import { BaselineResponse, ProfileParams } from "./utils/types"
+import { BaselineResponse, ProfileParams, ProfileParseParams, ProfileParseResponse } from "./utils/types"
 
 class Profile{
     updateProfile = async (profileData: ProfileParams) => {
         const res = await $api.post("/api/users/profile", profileData)
-        return res.data
+        const data = res.data
+        return data
+    }
+
+    parseSkills = async (description: string) => {
+        const res = await $api.post("/api/users/parse-skills", { text: description || "nothing" } as ProfileParseParams)
+        const data: ProfileParseResponse = res.data
+        return data
     }
 
     getBaseline = async () => {
