@@ -1,0 +1,109 @@
+.skill-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 1.25rem;
+  border: 2px solid transparent;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  animation: figma-pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.skill-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  background-color: light-dark(rgba(255, 255, 255, 0.8), rgba(15, 23, 42, 0.7));
+  border: 1px solid light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(4px);
+}
+
+.level-dots {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.dot-btn {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+  padding: 0;
+}
+
+.dot-btn[data-active="true"] {
+  transform: scale(1.3);
+  box-shadow: 0 0 12px currentColor;
+  animation: dot-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dot-btn:not([data-active="true"]) {
+  opacity: 0.35;
+}
+
+.dot-btn:hover:not([data-active="true"]) {
+  opacity: 0.8;
+  transform: scale(1.15);
+}
+
+.dot-beginner { background-color: #ef4444; color: rgba(239, 68, 68, 0.4); }
+.dot-intermediate { background-color: #f97316; color: rgba(249, 115, 22, 0.4); }
+.dot-advanced { background-color: #22c55e; color: rgba(34, 197, 94, 0.4); }
+
+.separator {
+  width: 1px;
+  height: 1.1rem;
+  background-color: light-dark(#e2e8f0, #334155);
+}
+
+.remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0.1rem;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.remove-btn:hover {
+  color: #ef4444;
+  transform: rotate(90deg) scale(1.2);
+}
+
+.level-beginner {
+  background-color: light-dark(#fef2f2, rgba(127, 29, 29, 0.25));
+  border-color: light-dark(#fecaca, rgba(239, 68, 68, 0.2));
+  color: light-dark(#991b1b, #fca5a5);
+}
+
+.level-intermediate {
+  background-color: light-dark(#fff7ed, rgba(124, 45, 18, 0.25));
+  border-color: light-dark(#fed7aa, rgba(249, 115, 22, 0.2));
+  color: light-dark(#9a3412, #fdba74);
+}
+
+.level-advanced {
+  background-color: light-dark(#f0fdf4, rgba(20, 83, 45, 0.25));
+  border-color: light-dark(#bbf7d0, rgba(34, 197, 94, 0.2));
+  color: light-dark(#166534, #86efac);
+}
+
+@keyframes dot-bounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  100% { transform: scale(1.3); }
+}
