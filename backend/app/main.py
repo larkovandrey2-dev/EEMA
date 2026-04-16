@@ -1,0 +1,22 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.api import router_user,router_courses, router_auth
+
+app = FastAPI(
+    title="EEMA RecSys",
+    version="1.0",
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.include_router(router_user.router)
+app.include_router(router_courses.router)
+app.include_router(router_auth.router)
+@app.get("/")
+def read_root():
+    return {"status": "ok"}
+

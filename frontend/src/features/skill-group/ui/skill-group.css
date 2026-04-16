@@ -1,0 +1,59 @@
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 48rem;
+  margin: 0 auto 3rem;
+}
+
+.skill-add-btn {
+  padding: 0.75rem 1.25rem;
+  border-radius: 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  
+  background-color: light-dark(#ffffff, #1e293b);
+  border: 1px solid light-dark(#e2e8f0, #334155);
+  color: light-dark(#475569, #cbd5e1);
+  
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  
+  transition: 
+    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.3s ease;
+    
+  animation: figma-pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.skill-add-btn:hover {
+  transform: translateY(-4px) scale(1.02);
+  
+  border-color: light-dark(#7c3aed66, #a78bfa66);
+  color: light-dark(#7c3aed, #a78bfa);
+  
+  box-shadow: light-dark(
+    0 10px 15px -3px rgba(124, 58, 237, 0.15), 
+    0 10px 15px -3px rgba(0, 0, 0, 0.3)
+  );
+}
+
+.skill-add-btn:active {
+  transform: translateY(-1px) scale(0.96);
+}
+
+@keyframes figma-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

@@ -1,0 +1,36 @@
+.temp-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+  border-radius: 9999px;
+  border: 1px solid light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.1));
+  
+  background-color: light-dark(rgba(255, 255, 255, 0.8), rgba(15, 23, 42, 0.7));
+  backdrop-filter: blur(4px);
+  
+  color: light-dark(#64748b, #94a3b8);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.temp-button:hover {
+  background-color: light-dark(rgba(255, 255, 255, 1), rgba(30, 41, 59, 0.8));
+  color: #7c3aed;
+  border-color: light-dark(rgba(124, 58, 237, 0.2), rgba(124, 58, 237, 0.3));
+}
+
+.temp-button:active {
+  transform: scale(0.96);
+}
+
+.temp-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
