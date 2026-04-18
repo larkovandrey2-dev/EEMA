@@ -1,11 +1,11 @@
 from typing import Optional
-
+from app.schemas.models import RecommendationInput
 from fastapi import APIRouter, Query, HTTPException
 from fastapi.params import Depends
 from datetime import datetime, timezone
 from app.core.security import get_current_user_id
 from app.core.database import supabase
-
+from services.embed_query import embed_query
 router = APIRouter(prefix="/api/courses", tags=["Courses"])
 @router.get("/recommend/baseline")
 def get_recommend_baseline(
@@ -17,11 +17,15 @@ def get_recommend_baseline(
             raise HTTPException(status_code=404, detail="Пользователь не найден")
         prefs = user_resp.data[0].get("preferences", {})
         skills = prefs.get("skills", {})
-        goals = prefs.get("learning_goals", {})
+        goals = prefs.get("learning_goals", [])
         map_diffs = {
             "beginner": "easy",
+            "Beginner": "easy",
             "medium": "normal",
-            "hard": "hard"
+            "advanced": "hard",
+            "hard": "hard",
+            "Intermediate": "normal",
+            "intermediate": "normal",
         }
         recommendations = []
         used_topics = []
@@ -42,14 +46,15 @@ def get_recommend_baseline(
             if response.data:
                 recommendations.extend(response.data)
                 used_topics.append(f"Прокачка: {skill} ({target_diff})")
-        if not recommendations:
+        if not recommendations or len(recommendations) < limit:
             query = supabase.table("courses").select("id","title", "url", "difficulty", "is_paid", "price", "learners_count")
             query = query.order("learners_count", desc=True).limit(limit).execute()
             recommendations.extend(query.data)
             used_topics.append("Общая популярность")
         unique_courses = {course["id"]: course for course in recommendations}
-        print(unique_courses)
-        final_rec = sorted(unique_courses.values(), key=lambda c: c["learners_count"],reverse=True)[:limit]
+        final_rec = list(unique_courses.values())[:limit]
+        print(final_rec)
+
         return {
             "strategy": "smart_baseline",
             "topics_used": used_topics,
@@ -102,5 +107,43 @@ def unlike_course(
             return {"status": "info", "message": "Лайк не был поставлен ранее"}
 
         return {"status": "success", "message": "Курс удален из избранного"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/recommend/advanced")
+def get_advanced_recommendations(
+        req: RecommendationInput,
+        user_id: str = Depends(get_current_user_id)
+):
+    try:
+        user_query = embed_query(req.query)
+        rpc_params = {
+            "query_embedding": user_query,
+            "match_threshold": 0.4,
+            "match_count": req.limit
+        }
+        rag_response = supabase.rpc("match_courses", rpc_params).execute()
+        if not rag_response.data:
+            return {"status": "empty", "message": "Ничего не найдено по смыслу"}
+
+        courses = rag_response.data
+        anchor_course = courses[0]
+        anchor_id = anchor_course["id"]
+        related_from_clusters = []
+        next_step_roadmap = []
+
+        return {
+            "strategy": "rag_plus_classic_ml",
+            "search_query": req.query,
+            # Основная выдача от RAG
+            "main_results": courses,
+            # Дополнительные данные от классического ML
+            "ml_enrichment": {
+                "anchor_course_title": anchor_course["title"],
+                "cluster_neighbors": related_from_clusters,
+                "markov_roadmap": next_step_roadmap
+            }
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

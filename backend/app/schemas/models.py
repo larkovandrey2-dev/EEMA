@@ -9,3 +9,7 @@ class UserPreferences(BaseModel):
 
 class TextInput(BaseModel):
     text: str
+
+class RecommendationInput(BaseModel):
+    query: str
+    limit: int = 5
