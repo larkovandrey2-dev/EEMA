@@ -1,4 +1,11 @@
 import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_path, '..', '..', '..')) # Поднимаемся на 2 уровня: из app -> в backend -> в EEMA
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from collections import defaultdict, Counter
 from typing import Optional
 from app.schemas.models import RecommendationInput
@@ -9,6 +16,8 @@ from app.core.security import get_current_user_id
 from app.core.database import supabase
 import json
 from services.embed_query import embed_query
+from data_pipeline.db_client import get_updating_date
+
 router = APIRouter(prefix="/api/courses", tags=["Courses"])
 
 MARKOV_MATRIX_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "../../ML/scripts/markov_matrix.json")
@@ -235,8 +244,12 @@ def get_courses_catalog(
 
         response = query.range(start, end).execute()
 
+        update_date_obj = get_updating_date()
+        update_date_str = update_date_obj.strftime('%Y-%m-%d %H:%M:%S') if update_date_obj else "Неизвестно"
+
         return {
             "status": "success",
+            "update_date": update_date_str,
             "meta": {
                 "current_page": page,
                 "page_size": size,

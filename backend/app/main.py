@@ -1,3 +1,11 @@
+import sys
+import os
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_path, '..', '..', '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import router_user,router_courses, router_auth
