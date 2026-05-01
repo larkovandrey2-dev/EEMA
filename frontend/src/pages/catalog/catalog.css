@@ -146,3 +146,53 @@
 .db-status:contains('Ошибка') .status-dot {
     background-color: #ef4444;
 }
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #7c3aed;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.back-link:hover {
+    transform: translateX(-5px);
+    text-decoration: underline;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.page-input-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: light-dark(#475569, #94a3b8);
+}
+
+.page-number-input {
+    width: 50px;
+    padding: 5px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid light-dark(#e2e8f0, #334155);
+    background: light-dark(#fff, #1e293b);
+    color: inherit;
+    font-weight: 700;
+    outline: none;
+}
+
+.page-number-input:focus {
+    border-color: #7c3aed;
+}
+
+.page-number-input::-webkit-outer-spin-button,
+.page-number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
