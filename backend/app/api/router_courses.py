@@ -1,3 +1,5 @@
+import os
+from collections import defaultdict, Counter
 from typing import Optional
 from app.schemas.models import RecommendationInput
 from fastapi import APIRouter, Query, HTTPException
@@ -5,8 +7,44 @@ from fastapi.params import Depends
 from datetime import datetime, timezone
 from app.core.security import get_current_user_id
 from app.core.database import supabase
+import json
 from services.embed_query import embed_query
 router = APIRouter(prefix="/api/courses", tags=["Courses"])
+
+MARKOV_MATRIX_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "../../ML/scripts/markov_matrix.json")
+try:
+    with open(MARKOV_MATRIX_PATH, "r", encoding="utf-8") as f:
+        MARKOV_MATRIX = json.load(f)
+except FileNotFoundError:
+    MARKOV_MATRIX = {}
+    print("Файл markov_matrix.json не найден")
+
+def get_markov_next_tags(current_tags: list, top_k:int = 2) -> list:
+    STOP_TAGS = {
+        "Информационные технологии",
+        "Языки программирования",
+        "Разработка программного обеспечения",
+        "Programming",
+        "Software and Development Tools",
+        "Учебные и академические дисциплины",
+        "Informatics",
+        "Digital Literacy"
+    }
+    meaningful_tags = [tag for tag in current_tags if tag not in STOP_TAGS]
+    next_step_scores = defaultdict(float)
+    for tag in meaningful_tags:
+        transitions = MARKOV_MATRIX.get(tag, {})
+        for next_tag, prob in transitions.items():
+            if next_tag not in current_tags:
+                next_step_scores[next_tag] += prob
+    print(next_step_scores)
+    sorted_steps = sorted(next_step_scores.items(), key=lambda x: x[1], reverse=True)
+    return [tag for tag, score in sorted_steps[:top_k]]
+
+
+
+
+
 @router.get("/recommend/baseline")
 def get_recommend_baseline(
         user_id: str = Depends(get_current_user_id),
@@ -129,10 +167,27 @@ def get_advanced_recommendations(
 
         courses = rag_response.data
         anchor_course = courses[0]
-        anchor_id = anchor_course["id"]
-        related_from_clusters = []
-        next_step_roadmap = []
+        all_top_tags = []
+        for c in courses[:3]:
+            all_top_tags.extend(c.get("tags", []))
+        tag_counts = Counter(all_top_tags)
+        dominant_tags = [tag for tag, count in tag_counts.most_common(3)]
+        next_tags = get_markov_next_tags(dominant_tags, top_k=2)
+        print(next_tags)
+        next_step_courses = []
+        if next_tags:
+            markov_query = supabase.table("courses").select("id, title, url, difficulty, learners_count, tags")\
+                .neq("id", anchor_course["id"])
+            top_next_tag = next_tags[0]
+            markov_response = markov_query.contains("tags", [top_next_tag]) \
+                .order("learners_count", desc=True) \
+                .limit(2) \
+                .execute()
 
+            for c in markov_response.data:
+                c["markov_reason"] = f"Логичный следующий шаг (Тема: {top_next_tag})"
+                next_step_courses.append(c)
+        related_from_clusters = []
         return {
             "strategy": "rag_plus_classic_ml",
             "search_query": req.query,
@@ -142,8 +197,54 @@ def get_advanced_recommendations(
             "ml_enrichment": {
                 "anchor_course_title": anchor_course["title"],
                 "cluster_neighbors": related_from_clusters,
-                "markov_roadmap": next_step_roadmap
+                "markov_roadmap": next_step_courses
             }
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/catalog")
+def get_courses_catalog(
+        page: int = Query(1, ge=1, description="Номер страницы"),
+        size: int = Query(12, ge=1, le=50, description="Количество курсов на странице"),
+        sort_by: str = Query("popular", description="Сортировка: popular, rating, new"),
+        difficulty: str = Query(None, description="Фильтр по сложности: easy, normal, hard"),
+        search: str = Query(None, description="Поиск по названию")
+):
+    try:
+        start = (page - 1) * size
+        end = start + size - 1
+
+        query = supabase.table("courses").select(
+            "id, title, url, difficulty, learners_count, rating, tags, is_paid, price",
+            count="exact"
+        )
+
+        if difficulty:
+            query = query.eq("difficulty", difficulty)
+        if search:
+            query = query.ilike("title", f"%{search}%")
+
+        if sort_by == "popular":
+            query = query.order("learners_count", desc=True)
+        elif sort_by == "rating":
+            query = query.order("rating", desc=True)
+        elif sort_by == "new":
+            query = query.order("id", desc=True)
+
+        response = query.range(start, end).execute()
+
+        return {
+            "status": "success",
+            "meta": {
+                "current_page": page,
+                "page_size": size,
+                "total_items": response.count,
+                "total_pages": (response.count + size - 1) // size if response.count else 0
+            },
+            "courses": response.data
+        }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

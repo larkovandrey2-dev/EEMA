@@ -1,3 +1,4 @@
+from click import prompt
 from dotenv import load_dotenv
 import os
 import requests
@@ -42,3 +43,35 @@ def ask_yagpt(system_prompt: str, user_text: str, temperature: float = 0.0) -> s
     except (KeyError, IndexError):
         raise Exception("YandexGPT вернул неожиданный формат ответа")
 
+if __name__ == "__main__":
+    prompt = """Сгенерируй финальный список из 120–150 профессиональных тегов для классификации онлайн-курсов.
+
+ОБЛАСТИ ДЛЯ ОХВАТА:
+
+Разработка (все популярные языки, архитектура, мобилки, фронт/бэк).
+
+Данные и ИИ (Data Science, Analytics, ML, Big Data, SQL).
+
+Инфраструктура (DevOps, Cloud, Linux, Cybersecurity).
+
+Дизайн (UI/UX, Graphic Design, Figma, 3D).
+
+Бизнес и Менеджмент (Project/Product Management, Agile, Soft Skills, Finance).
+
+Маркетинг (SEO, SMM, Digital Marketing).
+
+ТРЕБОВАНИЯ К ТЕГАМ:
+
+Только на английском языке.
+
+Теги должны быть "плоскими" (одно-два слова, например "Python" или "System Design").
+
+Избегай слишком узких тем (вместо "Python 3.10" пиши "Python").
+
+Обязательно включи популярные инструменты (Docker, React, Excel, Jira).
+
+ФОРМАТ ВЫВОДА (КРИТИЧЕСКИ ВАЖНО):
+Выдай результат ОДНИМ сплошным списком через запятую. НЕ используй нумерацию, НЕ разбивай на категории заголовками, НЕ пиши никакого вводного текста. Только слова через запятую."""
+    sys_p = """Ты — эксперт по анализу данных и проектированию образовательных программ (Curriculum Architect). Твоя задача — создать профессиональную, стандартизированную таксономию навыков для платформы онлайн-обучения. Ты используешь общепринятые в индустрии названия технологий и профессий на английском языке. Ты лаконичен и строго следуешь заданному формату вывода."""
+    res = ask_yagpt(system_prompt=sys_p, user_text=prompt, temperature=0.5)
+    print(res)
