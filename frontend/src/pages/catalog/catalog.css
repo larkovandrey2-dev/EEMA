@@ -1,10 +1,9 @@
-
-
 .catalog-page {
     padding-bottom: 5rem;
 }
 
 .filters-section {
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -195,4 +194,22 @@
 .page-number-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+.search-box input {
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    border: 1px solid light-dark(#e2e8f0, #1e293b);
+    background: light-dark(#fff, #0f172a);
+    color: inherit;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+.search-box {
+    width: 100%;
+    margin-bottom: 1rem;
 }
