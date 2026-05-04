@@ -1,0 +1,69 @@
+.markov-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding: 16px 18px;
+  border-radius: 16px;
+
+  background-color: light-dark(#ffffff, #0f172a);
+  text-decoration: none;
+
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.markov-card:hover {
+  background-color: light-dark(#f8fafc, #1e293b);
+  transform: translateY(-2px);
+}
+
+/* Номер слева */
+.markov-index {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9999px;
+  background-color: light-dark(#3b82f6, #1e40af);
+  color: white;
+
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* Контент */
+.markov-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Заголовок */
+.markov-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: light-dark(#1e293b, #f1f5f9);
+}
+
+/* Метаданные */
+.markov-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.85rem;
+  color: light-dark(#64748b, #94a3b8);
+}
+
+.markov-separator {
+  opacity: 0.6;
+}
+
+.markov-difficulty {
+  text-transform: capitalize;
+}

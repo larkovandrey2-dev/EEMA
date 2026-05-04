@@ -69,7 +69,9 @@
 
 .header-actions {
     display: flex;
+    align-items: center;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .temp-button.logout-btn {
@@ -97,12 +99,6 @@
         width: 100%;
         justify-content: flex-start;
     }
-}
-.course-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
-    width: 100%;
 }
 
 .temp-button.primary-button {

@@ -9,7 +9,6 @@
   transition: background-color 0.3s ease, color 0.3s ease;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
-
 .theme-block{
   display: flex;
   justify-content: end;
@@ -28,6 +27,7 @@
   font-weight: 900;
   letter-spacing: -0.05em;
   line-height: 1.1;
+  width: 200px;
   text-align: center;
   margin-top: 2rem;
   margin-bottom: 0.5rem;

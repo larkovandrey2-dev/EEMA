@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './catalog.css';
-import '../../features/course-block/ui/course-unit.css';
 
 interface Course {
     id: number | string;

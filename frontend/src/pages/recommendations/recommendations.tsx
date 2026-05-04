@@ -2,6 +2,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { CourseBlock } from "../../features";
 import { auth } from "../../shared/api/auth";
 import "./recommendations.css";
+import { ThemeButton } from "../../shared";
 
 const RecommendationPage = () => {
     const navigate = useNavigate();
@@ -26,6 +27,7 @@ const RecommendationPage = () => {
                     <button className="temp-button logout-btn" onClick={auth.logout}>
                         Выйти
                     </button>
+                    <ThemeButton></ThemeButton>
                 </div>
             </header>
 

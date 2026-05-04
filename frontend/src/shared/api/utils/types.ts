@@ -35,10 +35,20 @@ export type Course = {
   id: number;
   title: string;
   url: string;
+  stepik_id: number;
+
   difficulty: "easy" | "normal" | "hard" | null;
   is_paid: boolean;
   price: number | null;
+
   learners_count: number;
+  rating: number
+  similarity: number
+
+  summary: string
+  tags: string[]
+
+  updated_at: string
 };
 
 export type BaselineResponse = {
@@ -57,4 +67,27 @@ export type ProfileParseResponse = {
 };
 export type ProfileParseParams = {
   text: string
+}
+
+export interface AdvancedRecommendationsResponse {
+  strategy: string
+  search_query: string
+  main_results: Course[]
+  ml_enrichment: MlEnrichment
+}
+
+export type Markov = {
+  difficulty: "normal";
+  id: number;
+  learners_count: number;
+  markov_reason: string;
+  tags: string[];
+  title: string;
+  url: string;
+};
+
+export interface MlEnrichment {
+  anchor_course_title: string
+  cluster_neighbors: Course[]
+  markov_roadmap: Markov[]
 }

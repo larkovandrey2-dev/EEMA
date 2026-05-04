@@ -6,7 +6,7 @@
   min-height: 100dvh;
   display: flex;
   justify-content: center;
-  background: light-dark(#f3f4f6, #0f172a);
+  background-color: light-dark(#f8fafc, #0f172a);
 }
 
 .auth-container {
@@ -103,7 +103,6 @@
 
   transition: 0.2s ease;
 }
-
 .auth-button:hover {
   opacity: 0.9;
 }

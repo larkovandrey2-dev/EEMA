@@ -19,5 +19,11 @@ class Profile{
         const data: BaselineResponse = res.data
         return data
     }
+
+    getAdvancedRecommendations = async (query: string, limit: number = 5) => {
+        const res = await $api.post("/api/courses/recommend/advanced", { "query": query, "limit": limit })
+        const data = res.data
+        return data
+    }
 }
 export const profileApi = new Profile()
