@@ -1,6 +1,5 @@
 import os
 from collections import defaultdict, Counter
-from typing import Optional
 from app.schemas.models import RecommendationInput
 from fastapi import APIRouter, Query, HTTPException
 from fastapi.params import Depends
