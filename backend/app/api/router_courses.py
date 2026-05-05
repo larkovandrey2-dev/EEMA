@@ -7,7 +7,6 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from collections import defaultdict, Counter
-from typing import Optional
 from app.schemas.models import RecommendationInput
 from fastapi import APIRouter, Query, HTTPException
 from fastapi.params import Depends
