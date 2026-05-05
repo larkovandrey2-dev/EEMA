@@ -5,5 +5,5 @@ import { profileApi } from "./api/users";
 import { BaselineResponse } from "./api/utils/types";
 import { CourseUnit } from "./course-unit/course-unit";
 
-export {toggleTheme, getTheme, setInitialTheme, ThemeButton, profileApi};
-export type {ProfileParams, BaselineResponse, Course, CourseUnit, Markov}
+export {toggleTheme, getTheme, setInitialTheme, ThemeButton, profileApi, CourseUnit};
+export type {ProfileParams, BaselineResponse, Course, Markov}

@@ -28,7 +28,9 @@ export const CourseUnit: React.FC<Course> = ({id, title, url, difficulty, is_pai
                       <b className="free">FREE</b>
                     )}
                 </span>
+                {/*
                 <span className="courseUnit_elem">rating: {rating.toFixed(1)}</span>
+                */}
             </div>
         </a>
       );

@@ -17,7 +17,6 @@
   transform: translateY(-2px);
 }
 
-/* Номер слева */
 .markov-index {
   width: 40px;
   height: 40px;
@@ -36,21 +35,18 @@
   font-size: 0.95rem;
 }
 
-/* Контент */
 .markov-body {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-/* Заголовок */
 .markov-title {
   font-size: 1rem;
   font-weight: 700;
   color: light-dark(#1e293b, #f1f5f9);
 }
 
-/* Метаданные */
 .markov-meta {
   display: flex;
   align-items: center;
