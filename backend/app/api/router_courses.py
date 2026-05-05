@@ -225,7 +225,22 @@ def get_advanced_recommendations(
             for c in markov_response.data:
                 c["markov_reason"] = f"Логичный следующий шаг (Тема: {top_next_tag})"
                 next_step_courses.append(c)
+
+        anchor_emb = anchor_course["embedding"]
+        anchor_id = anchor_course["id"]
+        anchor_cluster_id = anchor_course["cluster_id"]
         related_from_clusters = []
+        if anchor_cluster_id is not None and anchor_emb:
+            cluster_params = {
+                "target_embedding": anchor_emb,
+                "target_cluster_id": anchor_cluster_id,
+                "target_course_id": anchor_id,
+                "match_count": 3
+            }
+            cluster_response = supabase.rpc("get_cluster_neighbors", cluster_params).execute()
+            for c in cluster_response.data:
+                c["cluster_reason"] = "Похожие курсы по тематике (Кластеризация)"
+                related_from_clusters.append(c)
         return {
             "strategy": "rag_plus_classic_ml",
             "search_query": req.query,
