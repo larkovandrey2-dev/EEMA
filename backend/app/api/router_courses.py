@@ -164,17 +164,50 @@ def get_advanced_recommendations(
         user_id: str = Depends(get_current_user_id)
 ):
     try:
+        user_resp = supabase.table("users").select("preferences").eq("id", user_id).execute()
+        prefs = user_resp.data[0].get("preferences", {}) if user_resp.data else {}
+        user_skills = prefs.get("skills", {})
+        LEVEL_WEIGHTS = {
+            "beginner": 1, "easy": 1,
+            "medium": 2, "normal": 2,
+            "hard": 3, "expert": 3, "high": 3
+        }
+        user_skills_numeric = {
+            k.lower(): LEVEL_WEIGHTS.get(v.lower(), 1)
+            for k, v in user_skills.items()
+        }
         user_query = embed_query(req.query)
         rpc_params = {
             "query_embedding": user_query,
-            "match_threshold": 0.4,
-            "match_count": req.limit
+            "match_threshold": 0.55,
+            "match_count": req.limit * 5
         }
         rag_response = supabase.rpc("match_courses", rpc_params).execute()
         if not rag_response.data:
-            return {"status": "empty", "message": "Ничего не найдено по смыслу"}
+            return {"status": "empty", "message": "Ничего не найдено"}
+        expert_skills = [k.lower() for k, v in user_skills.items() if v in ["hard", "expert"]]
 
-        courses = rag_response.data
+        filtered_courses = []
+        for course in rag_response.data:
+            course_diff_str = (course.get("difficulty") or "easy").lower()
+            course_diff_num = LEVEL_WEIGHTS.get(course_diff_str, 1)
+
+            course_tags_lower = [t.lower() for t in course.get("tags", [])]
+
+            is_too_easy = False
+
+            for tag in course_tags_lower:
+                if tag in user_skills_numeric:
+                    user_level_num = user_skills_numeric[tag]
+                    if (user_level_num - course_diff_num) > 1:
+                        is_too_easy = True
+                        break
+            if not is_too_easy:
+                filtered_courses.append(course)
+        if not filtered_courses:
+            courses = rag_response.data[:req.limit]
+        else:
+            courses = filtered_courses[:req.limit]
         anchor_course = courses[0]
         all_top_tags = []
         for c in courses[:3]:
@@ -182,7 +215,12 @@ def get_advanced_recommendations(
         tag_counts = Counter(all_top_tags)
         dominant_tags = [tag for tag, count in tag_counts.most_common(3)]
         next_tags = get_markov_next_tags(dominant_tags, top_k=2)
-        print(next_tags)
+        known_skills = [skill.lower() for skill, level in user_skills.items() if level in ["medium", "high", "expert", "hard", "normal"]]
+        filtered_next_tags = []
+        for tag in next_tags:
+            if tag.lower() not in known_skills:
+                filtered_next_tags.append(tag)
+        next_tags = filtered_next_tags
         next_step_courses = []
         if next_tags:
             markov_query = supabase.table("courses").select("id, title, url, difficulty, learners_count, tags")\
@@ -196,7 +234,22 @@ def get_advanced_recommendations(
             for c in markov_response.data:
                 c["markov_reason"] = f"Логичный следующий шаг (Тема: {top_next_tag})"
                 next_step_courses.append(c)
+
+        anchor_emb = anchor_course["embedding"]
+        anchor_id = anchor_course["id"]
+        anchor_cluster_id = anchor_course["cluster_id"]
         related_from_clusters = []
+        if anchor_cluster_id is not None and anchor_emb:
+            cluster_params = {
+                "target_embedding": anchor_emb,
+                "target_cluster_id": anchor_cluster_id,
+                "target_course_id": anchor_id,
+                "match_count": 3
+            }
+            cluster_response = supabase.rpc("get_cluster_neighbors", cluster_params).execute()
+            for c in cluster_response.data:
+                c["cluster_reason"] = "Похожие курсы по тематике (Кластеризация)"
+                related_from_clusters.append(c)
         return {
             "strategy": "rag_plus_classic_ml",
             "search_query": req.query,
