@@ -175,7 +175,18 @@ def get_advanced_recommendations(
         }
         rag_response = supabase.rpc("match_courses", rpc_params).execute()
         if not rag_response.data:
-            return {"status": "empty", "message": "Ничего не найдено"}
+            return {
+                "strategy": "rag_plus_classic_ml",
+                "search_query": "",
+                # Основная выдача от RAG
+                "main_results": [],
+                # Дополнительные данные от классического ML
+                "ml_enrichment": {
+                    "anchor_course_title": "",
+                    "cluster_neighbors": "",
+                    "markov_roadmap": ""
+                }
+            }
         expert_skills = [k.lower() for k, v in user_skills.items() if v in ["hard", "expert"]]
 
         filtered_courses = []
