@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.mixture import GaussianMixture
 from sklearn.decomposition import PCA
@@ -10,7 +11,7 @@ from sklearn.decomposition import PCA
 def str_to_array_decompose(s):
   return np.array(list(map(float,s[1:-1].split(","))),dtype=np.float64)
 
-def clusterize_data(courses_file: str) -> tuple[pd.Dataframe, GradientBoostingClassifier, np.float64, np.float64]:
+def clusterize_data(courses_file: str) -> tuple[pd.DataFrame, GradientBoostingClassifier, np.float64, np.float64]:
   df = pd.read_csv(courses_file)
   df_embeddings = df['embedding'].apply(str_to_array_decompose)
   embedding_matrix = np.vstack(df_embeddings)
@@ -23,7 +24,7 @@ def clusterize_data(courses_file: str) -> tuple[pd.Dataframe, GradientBoostingCl
   pref_sums /= pref_sums.max()
 
   n_comp = 0
-  for i in range(len(embedding_matrix[0]),1,-1):
+  for i in range(len(embedding_matrix[0]) - 1, 1, -1):
     if pref_sums[i] < 0.96:
       n_comp = i
       break

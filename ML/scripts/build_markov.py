@@ -1,9 +1,32 @@
 import time
 
-from app.core.database import supabase
-from services.llm_request import ask_yagpt
+from pathlib import Path
+import os
+
+from dotenv import load_dotenv
+from supabase import create_client, Client
+
+try:
+    from app.core.database import supabase
+except ImportError:
+    load_dotenv()
+    supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+
+try:
+    from services.llm_request import ask_yagpt
+except ImportError:
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "backend"))
+    from services.llm_request import ask_yagpt
 from collections import Counter
 import json
+from ML.scripts.markov import filter_transition_matrix
+from data_pipeline.tag_normalizer import BROAD_STOP_TAGS
+
+
+MARKOV_MATRIX_PATH = Path(__file__).with_name("markov_matrix.json")
+
+
 def get_golden_tags(min_occur:int = 3, max_tags:int = 200):
 
     resp = supabase.table("courses").select("tags").execute()
@@ -52,6 +75,7 @@ def generate_transition_matrix(tags_batch: list, all_golden_tags: list):
 
 def build_markov_matrix():
     golden_tags = get_golden_tags(min_occur=3, max_tags=250)
+    available_tags = set(golden_tags)
     print(golden_tags)
     final_markov_matrix = {}
     batch_size = 5
@@ -63,7 +87,12 @@ def build_markov_matrix():
             final_markov_matrix.update(transition_matrix)
             print("Successfully generated transition matrix batch")
         time.sleep(1)
-    with open("markov_matrix.json", "w") as f:
+    final_markov_matrix = filter_transition_matrix(
+        final_markov_matrix,
+        available_tags=available_tags,
+        broad_tags=BROAD_STOP_TAGS,
+    )
+    with open(MARKOV_MATRIX_PATH, "w", encoding="utf-8") as f:
         json.dump(final_markov_matrix, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
