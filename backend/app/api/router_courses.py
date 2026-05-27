@@ -8,6 +8,12 @@ from app.core.security import get_current_user_id
 from app.core.database import supabase
 import json
 from services.embed_query import embed_query
+from services.difficulty_policy import (
+    filter_courses_for_user_skills,
+    normalize_user_skills,
+    preferred_course_difficulty,
+    profile_level_rank,
+)
 from services.personalization import (
     build_user_interest_profile,
     get_scoring_tags,
@@ -177,22 +183,13 @@ def get_recommend_baseline(
         if not user_resp.data:
             raise HTTPException(status_code=404, detail="Пользователь не найден")
         prefs = user_resp.data[0].get("preferences", {})
-        skills = prefs.get("skills", {})
+        skills = normalize_user_skills(prefs.get("skills", {}))
         goals = prefs.get("learning_goals", [])
-        map_diffs = {
-            "beginner": "easy",
-            "Beginner": "easy",
-            "medium": "normal",
-            "advanced": "hard",
-            "hard": "hard",
-            "Intermediate": "normal",
-            "intermediate": "normal",
-        }
         recommendations = []
         used_topics = []
         for goal in goals[:2]:
             goal = goal.capitalize()
-            query = supabase.table("courses").select("id","title","url","difficulty","is_paid","price","learners_count")
+            query = supabase.table("courses").select("id","title","url","difficulty","tags","is_paid","price","learners_count")
             query = query.contains("tags", [goal]).eq("difficulty","easy")
             response = query.order("learners_count",desc=True).limit(3).execute()
             if response.data:
@@ -200,17 +197,18 @@ def get_recommend_baseline(
                 used_topics.append(f"Цель: {goal} (easy)")
 
         for skill, skill_level in list(skills.items())[:2]:
-            target_diff = map_diffs.get(skill_level.lower(), "easy")
-            query = supabase.table("courses").select("id","title","url","difficulty","is_paid","price","learners_count")
+            target_diff = preferred_course_difficulty(skill_level)
+            query = supabase.table("courses").select("id","title","url","difficulty","tags","is_paid","price","learners_count")
             query = query.contains("tags", [skill]).eq("difficulty", target_diff)
             response = query.order("learners_count", desc=True).limit(3).execute()
             if response.data:
                 recommendations.extend(response.data)
                 used_topics.append(f"Прокачка: {skill} ({target_diff})")
-        if not recommendations or len(recommendations) < limit:
-            query = supabase.table("courses").select("id","title", "url", "difficulty", "is_paid", "price", "learners_count")
-            query = query.order("learners_count", desc=True).limit(limit).execute()
-            recommendations.extend(query.data)
+        recommendations = filter_courses_for_user_skills(recommendations, skills)
+        if len(recommendations) < limit:
+            query = supabase.table("courses").select("id","title", "url", "difficulty", "tags", "is_paid", "price", "learners_count")
+            query = query.order("learners_count", desc=True).limit(limit * 5).execute()
+            recommendations.extend(filter_courses_for_user_skills(query.data or [], skills))
             used_topics.append("Общая популярность")
         unique_courses = {course["id"]: course for course in recommendations}
         final_rec = list(unique_courses.values())[:limit]
@@ -280,16 +278,7 @@ def get_advanced_recommendations(
     try:
         user_resp = supabase.table("users").select("preferences").eq("id", user_id).execute()
         prefs = user_resp.data[0].get("preferences", {}) if user_resp.data else {}
-        user_skills = prefs.get("skills", {})
-        LEVEL_WEIGHTS = {
-            "beginner": 1, "easy": 1,
-            "medium": 2, "normal": 2,
-            "hard": 3, "expert": 3, "high": 3
-        }
-        user_skills_numeric = {
-            k.lower(): LEVEL_WEIGHTS.get(v.lower(), 1)
-            for k, v in user_skills.items()
-        }
+        user_skills = normalize_user_skills(prefs.get("skills", {}))
         user_query = embed_query(req.query)
         liked_courses = load_liked_courses(supabase, user_id)
         query_intent = understand_query(req.query, query_embedding=user_query)
@@ -300,27 +289,9 @@ def get_advanced_recommendations(
         if not rag_response.data:
             return get_empty_advanced_response(req.query, public_user_profile)
 
-        filtered_courses = []
-        for course in rag_response.data:
-            course_diff_str = (course.get("difficulty") or "easy").lower()
-            course_diff_num = LEVEL_WEIGHTS.get(course_diff_str, 1)
-
-            course_tags_lower = [t.lower() for t in get_course_tags(course)]
-
-            is_too_easy = False
-
-            for tag in course_tags_lower:
-                if tag in user_skills_numeric:
-                    user_level_num = user_skills_numeric[tag]
-                    if (user_level_num - course_diff_num) > 1:
-                        is_too_easy = True
-                        break
-            if not is_too_easy:
-                filtered_courses.append(course)
-        if not filtered_courses:
-            candidate_courses = rag_response.data
-        else:
-            candidate_courses = filtered_courses
+        candidate_courses = filter_courses_for_user_skills(rag_response.data, user_skills)
+        if not candidate_courses:
+            return get_empty_advanced_response(req.query, public_user_profile)
         courses = personalize_courses(
             candidate_courses,
             user_interest_profile,
@@ -333,7 +304,11 @@ def get_advanced_recommendations(
         anchor_course = courses[0]
         dominant_tags = get_markov_seed_tags(courses, query_intent, top_k=3)
         next_tags = get_markov_next_tags(dominant_tags, top_k=2)
-        known_skills = [skill.lower() for skill, level in user_skills.items() if level in ["medium", "high", "expert", "hard", "normal"]]
+        known_skills = [
+            skill.lower()
+            for skill, level in user_skills.items()
+            if profile_level_rank(level) >= 2
+        ]
         filtered_next_tags = []
         for tag in next_tags:
             if tag.lower() not in known_skills:
@@ -349,7 +324,7 @@ def get_advanced_recommendations(
                 .limit(2) \
                 .execute()
 
-            for c in markov_response.data:
+            for c in filter_courses_for_user_skills(markov_response.data or [], user_skills):
                 c["markov_reason"] = f"Логичный следующий шаг (Тема: {top_next_tag})"
                 next_step_courses.append(get_public_course(c))
 
@@ -365,7 +340,7 @@ def get_advanced_recommendations(
                 "match_count": 3
             }
             cluster_response = supabase.rpc("get_cluster_neighbors", cluster_params).execute()
-            for c in cluster_response.data:
+            for c in filter_courses_for_user_skills(cluster_response.data or [], user_skills):
                 c["cluster_reason"] = "Похожие курсы по тематике (Кластеризация)"
                 related_from_clusters.append(get_public_course(c))
         return {

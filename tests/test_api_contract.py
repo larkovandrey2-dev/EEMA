@@ -1,3 +1,5 @@
+import pytest
+
 from app.api import router_courses
 from app.schemas.models import RecommendationInput
 from services.query_understanding import QueryIntent
@@ -515,3 +517,109 @@ def test_frontend_api_uses_context_relevant_react_like(monkeypatch):
         "React",
     ]
     assert result["ml_enrichment"]["user_profile"]["context_liked_courses_count"] == 1
+
+
+@pytest.mark.parametrize("saved_level", ["Advanced", "high"])
+def test_advanced_recommendations_do_not_return_easy_matching_skill_for_high_user_level(
+    monkeypatch,
+    saved_level,
+):
+    fake_supabase = FakeSupabase(
+        [
+            {
+                "id": 1,
+                "title": "Python easy",
+                "url": "https://stepik.org/course/1",
+                "difficulty": "easy",
+                "learners_count": 10,
+                "rating": 4.0,
+                "tags": ["Python"],
+                "is_paid": False,
+                "price": None,
+                "embedding": [0.1, 0.2],
+                "cluster_id": None,
+                "similarity": 0.9,
+            }
+        ]
+    )
+    fake_supabase.table_data["users"] = [
+        {"preferences": {"skills": {"Python": saved_level}, "learning_goals": []}}
+    ]
+    monkeypatch.setattr(router_courses, "MARKOV_MATRIX", {})
+    monkeypatch.setattr(router_courses, "embed_query", lambda query: [0.1, 0.2])
+    monkeypatch.setattr(router_courses, "supabase", fake_supabase)
+
+    result = router_courses.get_advanced_recommendations(
+        RecommendationInput(query="Python", limit=1),
+        user_id="user-1",
+    )
+
+    assert result["main_results"] == []
+
+
+def test_advanced_recommendations_normalizes_profile_alias_and_allows_normal_course(monkeypatch):
+    fake_supabase = FakeSupabase(
+        [
+            {
+                "id": 1,
+                "title": "Python easy",
+                "url": "https://stepik.org/course/1",
+                "difficulty": "easy",
+                "tags": ["Python"],
+                "embedding": [0.1, 0.2],
+                "cluster_id": None,
+            },
+            {
+                "id": 2,
+                "title": "Python normal",
+                "url": "https://stepik.org/course/2",
+                "difficulty": "normal",
+                "tags": ["Python"],
+                "embedding": [0.1, 0.2],
+                "cluster_id": None,
+            },
+        ]
+    )
+    fake_supabase.table_data["users"] = [
+        {"preferences": {"skills": {"питон": "high"}, "learning_goals": []}}
+    ]
+    monkeypatch.setattr(router_courses, "MARKOV_MATRIX", {})
+    monkeypatch.setattr(router_courses, "embed_query", lambda query: [0.1, 0.2])
+    monkeypatch.setattr(router_courses, "supabase", fake_supabase)
+
+    result = router_courses.get_advanced_recommendations(
+        RecommendationInput(query="Python", limit=2),
+        user_id="user-1",
+    )
+
+    assert [course["id"] for course in result["main_results"]] == [2]
+
+
+def test_baseline_filters_easy_course_for_high_matching_skill(monkeypatch):
+    fake_supabase = FakeSupabase([])
+    fake_supabase.table_data["users"] = [
+        {"preferences": {"skills": {"Python": "Advanced"}, "learning_goals": []}}
+    ]
+    fake_supabase.table_data["courses"] = [
+        {
+            "id": 1,
+            "title": "Python easy",
+            "url": "https://stepik.org/course/1",
+            "difficulty": "easy",
+            "tags": ["Python"],
+            "learners_count": 20,
+        },
+        {
+            "id": 2,
+            "title": "Python hard",
+            "url": "https://stepik.org/course/2",
+            "difficulty": "hard",
+            "tags": ["Python"],
+            "learners_count": 10,
+        },
+    ]
+    monkeypatch.setattr(router_courses, "supabase", fake_supabase)
+
+    result = router_courses.get_recommend_baseline(user_id="user-1", limit=10)
+
+    assert [course["id"] for course in result["courses"]] == [2]
