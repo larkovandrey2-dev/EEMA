@@ -81,6 +81,11 @@
 .search-button:hover {
   opacity: 0.9;
 }
+.search-button:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
+}
 .course-group-wrapper {
   background-color: light-dark(#ffffff, #0f172a);
   padding: 10px;

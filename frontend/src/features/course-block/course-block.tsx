@@ -43,9 +43,9 @@ export const CourseBlock = () => {
                       placeholder="Введите запрос..."
                         />
                     </div>
-                <button className="search-button" onClick={handleClick}>Найти рекомендации</button>
+                <button className="search-button" onClick={handleClick} disabled={!text}>Найти рекомендации</button>
             </div>
-            {filled ? loading ? <p>Загрузка...</p> : !!recommendations ? <div className="sections-grid">
+            {filled ? loading ? <p>Загрузка...</p> : recommendations?.main_results && recommendations.main_results.length ? <div className="sections-grid">
                 <div className="course-group-wrapper">
                     <p className="course-group-title">Топ-5 курсов</p>
                     <CourseGroup courses={recommendations?.main_results}></CourseGroup></div>

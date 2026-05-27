@@ -90,7 +90,6 @@
   border: none;
 
   cursor: pointer;
-
   font-size: 15px;
   font-weight: 500;
   color: white;
@@ -101,7 +100,7 @@
     light-dark(#6366f1, #818cf8)
   );
 
-  transition: 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.1s ease;
 }
 .auth-button:hover {
   opacity: 0.9;

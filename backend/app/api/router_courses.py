@@ -190,9 +190,9 @@ def get_advanced_recommendations(
                 "main_results": [],
                 # Дополнительные данные от классического ML
                 "ml_enrichment": {
-                    "anchor_course_title": "",
-                    "cluster_neighbors": "",
-                    "markov_roadmap": ""
+                    "anchor_course_title": [],
+                    "cluster_neighbors": [],
+                    "markov_roadmap": []
                 }
             }
         expert_skills = [k.lower() for k, v in user_skills.items() if v in ["hard", "expert"]]

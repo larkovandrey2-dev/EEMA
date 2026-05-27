@@ -83,6 +83,7 @@ body{
 html {
   font-size: var(--font-size);
   background-color: light-dark(#f8fafc, #0f172a);
+  -webkit-tap-highlight-color: transparent;
 }
 h1 {
   font-size: var(--text-2xl);

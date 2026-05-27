@@ -19,6 +19,7 @@
   width: 100%;
   min-height: 160px;
   padding: 1.5rem;
+  box-sizing: border-box;
   border-radius: 1.5rem;
   font-size: 1.125rem;
   outline: none;
