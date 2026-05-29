@@ -4,7 +4,7 @@ from app.schemas.models import RecommendationInput
 from fastapi import APIRouter, Query, HTTPException
 from fastapi.params import Depends
 from datetime import datetime, timezone
-from app.core.security import get_current_user_id
+from app.core.security import get_current_user_id, get_optional_current_user_id
 from app.core.database import supabase
 import json
 from services.embed_query import embed_query
@@ -18,6 +18,7 @@ from services.personalization import (
     build_user_interest_profile,
     get_scoring_tags,
     get_public_user_profile,
+    load_liked_course_ids,
     load_liked_courses,
     personalize_courses,
 )
@@ -47,6 +48,7 @@ PUBLIC_COURSE_FIELDS = {
     "tags",
     "is_paid",
     "price",
+    "is_liked",
     "markov_reason",
     "cluster_reason",
     "reason",
@@ -69,7 +71,7 @@ except FileNotFoundError:
     print("Файл markov_matrix.json не найден")
 
 
-def get_public_course(course: dict) -> dict:
+def get_public_course(course: dict, liked_course_ids: set[int] | None = None) -> dict:
     public_course = {
         key: value
         for key, value in course.items()
@@ -77,6 +79,10 @@ def get_public_course(course: dict) -> dict:
     }
     if "tags" not in public_course:
         public_course["tags"] = course.get("normalized_tags") or course.get("tags") or []
+    if liked_course_ids is None:
+        public_course["is_liked"] = bool(course.get("is_liked", False))
+    else:
+        public_course["is_liked"] = course.get("id") in liked_course_ids
     return public_course
 
 
@@ -185,6 +191,7 @@ def get_recommend_baseline(
         prefs = user_resp.data[0].get("preferences", {})
         skills = normalize_user_skills(prefs.get("skills", {}))
         goals = prefs.get("learning_goals", [])
+        liked_course_ids = load_liked_course_ids(supabase, user_id)
         recommendations = []
         used_topics = []
         for goal in goals[:2]:
@@ -218,7 +225,7 @@ def get_recommend_baseline(
             "strategy": "smart_baseline",
             "topics_used": used_topics,
             "results_count": len(final_rec),
-            "courses": final_rec
+            "courses": [get_public_course(course, liked_course_ids) for course in final_rec]
         }
 
 
@@ -281,6 +288,7 @@ def get_advanced_recommendations(
         user_skills = normalize_user_skills(prefs.get("skills", {}))
         user_query = embed_query(req.query)
         liked_courses = load_liked_courses(supabase, user_id)
+        liked_course_ids = {course["id"] for course in liked_courses if course.get("id") is not None}
         query_intent = understand_query(req.query, query_embedding=user_query)
         user_interest_profile = build_user_interest_profile(liked_courses, query_intent=query_intent)
         public_user_profile = get_public_user_profile(user_interest_profile)
@@ -326,7 +334,7 @@ def get_advanced_recommendations(
 
             for c in filter_courses_for_user_skills(markov_response.data or [], user_skills):
                 c["markov_reason"] = f"Логичный следующий шаг (Тема: {top_next_tag})"
-                next_step_courses.append(get_public_course(c))
+                next_step_courses.append(get_public_course(c, liked_course_ids))
 
         anchor_emb = anchor_course["embedding"]
         anchor_id = anchor_course["id"]
@@ -342,12 +350,12 @@ def get_advanced_recommendations(
             cluster_response = supabase.rpc("get_cluster_neighbors", cluster_params).execute()
             for c in filter_courses_for_user_skills(cluster_response.data or [], user_skills):
                 c["cluster_reason"] = "Похожие курсы по тематике (Кластеризация)"
-                related_from_clusters.append(get_public_course(c))
+                related_from_clusters.append(get_public_course(c, liked_course_ids))
         return {
             "strategy": "rag_plus_classic_ml",
             "search_query": req.query,
             # Основная выдача от RAG
-            "main_results": [get_public_course(course) for course in courses],
+            "main_results": [get_public_course(course, liked_course_ids) for course in courses],
             # Дополнительные данные от классического ML
             "ml_enrichment": {
                 "anchor_course_title": anchor_course["title"],
@@ -366,9 +374,11 @@ def get_courses_catalog(
         size: int = Query(12, ge=1, le=50, description="Количество курсов на странице"),
         sort_by: str = Query("popular", description="Сортировка: popular, rating, new"),
         difficulty: str = Query(None, description="Фильтр по сложности: easy, normal, hard"),
-        search: str = Query(None, description="Поиск по названию")
+        search: str = Query(None, description="Поиск по названию"),
+        user_id: str | None = Depends(get_optional_current_user_id),
 ):
     try:
+        liked_course_ids = load_liked_course_ids(supabase, user_id) if user_id else set()
         start = (page - 1) * size
         end = start + size - 1
 
@@ -399,7 +409,7 @@ def get_courses_catalog(
                 "total_items": response.count,
                 "total_pages": (response.count + size - 1) // size if response.count else 0
             },
-            "courses": response.data
+            "courses": [get_public_course(course, liked_course_ids) for course in (response.data or [])]
         }
 
     except Exception as e:

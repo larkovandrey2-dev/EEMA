@@ -264,7 +264,7 @@ def get_public_user_profile(profile: dict) -> dict:
     }
 
 
-def load_liked_courses(supabase: Any, user_id: str) -> list[dict]:
+def load_liked_course_ids(supabase: Any, user_id: str) -> set[int]:
     likes_response = (
         supabase.table("user_likes")
         .select("course_id, created_at")
@@ -276,13 +276,18 @@ def load_liked_courses(supabase: Any, user_id: str) -> list[dict]:
         for row in (likes_response.data or [])
         if row.get("course_id") is not None
     ]
+    return set(liked_ids)
+
+
+def load_liked_courses(supabase: Any, user_id: str) -> list[dict]:
+    liked_ids = load_liked_course_ids(supabase, user_id)
     if not liked_ids:
         return []
 
     courses_response = (
         supabase.table("courses")
         .select("id, title, url, difficulty, learners_count, rating, tags, normalized_tags, embedding, cluster_id, is_paid, price")
-        .in_("id", liked_ids)
+        .in_("id", list(liked_ids))
         .execute()
     )
     return courses_response.data or []

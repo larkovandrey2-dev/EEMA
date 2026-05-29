@@ -1,1059 +1,185 @@
 {
     "Python": {
-        "Machine Learning": 0.5,
-        "Data Analysis": 0.2,
-        "Web Development": 0.3
-    },
-    "Школьные предметы": {
-        "Подготовка к экзаменам": 0.4,
-        "Математика": 0.3,
-        "Русский язык": 0.3
-    },
-    "Личностный рост": {
-        "Soft Skills": 0.4,
-        "Career Growth": 0.3,
-        "Communication": 0.3
-    },
-    "Подготовка к экзаменам": {
-        "Подготовка к ЕГЭ": 0.6,
-        "Подготовка к ОГЭ": 0.4
-    },
-    "Artificial Intelligence": {
-        "Machine Learning": 0.4,
-        "Deep Learning": 0.3,
-        "Neural Networks": 0.3
-    },
-    "Бизнес и менеджмент": {
-        "Развитие бизнеса": 0.4,
-        "Управление бизнес-процессами": 0.3,
-        "Маркетинг": 0.2,
-        "Лидерство": 0.1
-    },
-    "Аналитика и исследование данных": {
-        "Data Science": 0.6,
-        "Machine Learning": 0.2,
-        "Data Visualization": 0.1,
-        "Statistics": 0.1
+        "Data Science": 0.4,
+        "Machine Learning": 0.3,
+        "Pandas": 0.3
     },
     "Data Analytics": {
-        "Data Analysis": 0.7,
-        "Data Processing and Analysis": 0.2,
-        "Business Analytics": 0.1
+        "Data Analysis": 0.5,
+        "Business Analysis": 0.2,
+        "SQL": 0.3
     },
-    "Выпускные экзамены в школе": {
-        "Подготовка к ЕГЭ": 0.6,
-        "Подготовка к ОГЭ": 0.3,
-        "Mathematics and Statistics": 0.1
-    },
-    "Искусственный интеллект": {
-        "Машинное обучение": 0.4,
-        "Нейронные сети": 0.3,
-        "Обработка и анализ данных": 0.3
-    },
-    "SQL": {
-        "Базы данных": 0.5,
-        "Data Analysis": 0.2,
-        "Data Science": 0.3
-    },
-    "Mathematics": {
-        "Математика и статистика": 0.666667,
-        "Data Analytics": 0.333333
+    "Artificial Intelligence": {
+        "Machine Learning": 0.6,
+        "Deep Learning": 0.3,
+        "Natural Language Processing": 0.1
     },
     "Web Development": {
-        "Frontend Development": 0.4,
-        "Backend Development": 0.3,
-        "Web Design": 0.3
-    },
-    "Data Analysis": {
-        "Data Analytics and Research": 0.5,
-        "Machine Learning": 0.2,
-        "Data Visualization": 0.3
-    },
-    "Введение в программирование": {
-        "Python": 0.4,
-        "Java": 0.3,
-        "JavaScript": 0.3
-    },
-    "Data Science": {
-        "Machine Learning": 0.6,
-        "Data Processing and Analysis": 0.2,
-        "Data Visualization": 0.2
-    },
-    "Soft Skills": {
-        "Личностный рост": 0.5,
-        "Деловая коммуникация": 0.2,
-        "Time Management and Productivity": 0.3
-    },
-    "Подготовка к ЕГЭ": {
-        "Математика и статистика": 0.6,
-        "Подготовка к экзаменам": 0.1,
-        "Школьные предметы": 0.3
-    },
-    "Английский язык": {
-        "Language Learning": 0.875,
-        "ExamPreparation": 0.125
-    },
-    "Математика": {
-        "Mathematics and Statistics": 0.5,
-        "Data Analysis": 0.3,
-        "Algorithms and data structures": 0.2
-    },
-    "Языки": {
-        "Английский язык": 0.571429,
-        "Language Learning": 0.428571
-    },
-    "Databases": {
-        "SQL": 0.777778,
-        "Базы данных": 0.222222
-    },
-    "Machine Learning": {
-        "Data Science": 0.4,
-        "Deep Learning": 0.3,
-        "Neural Networks": 0.3
-    },
-    "Обработка и анализ данных": {
-        "Data Science": 0.4,
-        "Machine Learning": 0.3,
-        "Data Visualization": 0.3
-    },
-    "Социальные и гуманитарные науки": {
-        "История": 0.5,
-        "Педагогика": 0.5
-    },
-    "Marketing": {
-        "Business Analysis": 0.5,
-        "Product Analytics": 0.5
-    },
-    "Algorithms": {
-        "Programming Paradigms": 1.0
-    },
-    "Дизайн и медиа": {
-        "Графический дизайн": 0.4,
-        "Веб-дизайн": 0.3,
-        "Figma": 0.3
-    },
-    "Data Analytics and Research": {
-        "Data Analysis": 0.5,
-        "Machine Learning": 0.2,
-        "Data Visualization": 0.3
-    },
-    "Наука о данных": {
-        "Data Science": 0.666667,
-        "Machine Learning": 0.333333
-    },
-    "Java": {
-        "Algorithms and data structures": 1.0
-    },
-    "Базы данных": {
-        "SQL": 0.4,
-        "Databases": 0.3,
-        "Data Processing and Analysis": 0.3
-    },
-    "Развитие бизнеса": {
-        "Бизнес и менеджмент": 0.4,
-        "Маркетинг": 0.3,
-        "Управление бизнес-процессами": 0.3
-    },
-    "Досуг": {
-        "Спорт и фитнес": 0.5,
-        "Музыка и танец": 0.2,
-        "Градостроительство": 0.1,
-        "Интернет-маркетинг": 0.2
-    },
-    "Веб-разработка": {
-        "Frontend Development": 0.6,
-        "Backend Development": 0.3,
-        "Web Design": 0.1
-    },
-    "Математика и статистика": {
-        "Data Analysis": 0.7,
-        "Machine Learning": 0.2,
-        "Statistics": 0.1
-    },
-    "Обучение преподавателей": {
-        "Педагогика": 0.5,
-        "Образование молодёжи": 0.3,
-        "Дистанционное обучение": 0.2
-    },
-    "Детям и подросткам": {
-        "Школьные предметы": 0.4,
-        "Подготовка к ОГЭ": 0.3,
-        "Программирование для детей": 0.3
-    },
-    "Computer Science": {
-        "Введение в программирование": 0.714286,
-        "Алгоритмы и структуры данных": 0.285714
-    },
-    "Languages": {
-        "Английский язык": 0.666667,
-        "Programming Paradigms": 0.333333
-    },
-    "Естественные науки": {
-        "Математика и статистика": 0.571429,
-        "Физика": 0.428571
-    },
-    "Project Management": {
-        "Business Analysis": 0.4,
-        "DevOps and System Administration": 0.3,
-        "Software Architecture": 0.3
-    },
-    "Тестирование ПО": {
-        "Software Testing": 0.4,
-        "QA Automation": 0.3,
-        "DevOps и системное администрирование": 0.3
-    },
-    "JavaScript": {
-        "Frontend Development": 0.714286,
-        "Web Development": 0.285714
-    },
-    "Educational Technologies": {
-        "Distance Learning": 1.0
-    },
-    "Алгоритмы и структуры данных": {
-        "Computer Science": 0.666667,
-        "Programming Paradigms": 0.333333
-    },
-    "Algorithms and data structures": {
-        "Programming Paradigms": 0.571429,
-        "Machine Learning": 0.428571
-    },
-    "Бэкенд-разработка": {
-        "Backend Development": 0.5,
-        "Web Development": 0.2,
-        "DevOps and System Administration": 0.3
-    },
-    "Engineering": {
-        "Engineering Design and Modeling": 0.4,
-        "Computer Networks": 0.3,
-        "Robotics and Automation": 0.3
-    },
-    "ПО и инструменты для разработки": {
-        "Frameworks and Libraries": 0.5,
-        "DevOps and System Administration": 0.5
-    },
-    "Data Visualization": {
-        "Data Analysis": 0.4,
-        "Data Science": 0.3,
-        "Business Analytics": 0.3
-    },
-    "Карьерный рост": {
-        "Поиск работы: резюме и собеседования": 0.4,
-        "Деловая коммуникация": 0.3,
-        "Управление бизнес-процессами": 0.3
-    },
-    "Programming Paradigms": {
-        "Object-Oriented Programming": 0.5,
-        "Functional Programming": 0.3,
-        "Algorithms and data structures": 0.2
-    },
-    "Neural Networks": {
-        "Machine Learning": 0.6,
-        "Deep Learning": 0.3,
-        "Data Science": 0.1
-    },
-    "Инженерное дело": {
-        "Engineering Design and Modeling": 0.4,
-        "Computer Networks": 0.3,
-        "Operational Activities": 0.3
+        "Frontend": 0.4,
+        "Backend": 0.3,
+        "DevOps": 0.3
     },
     "Backend": {
-        "Backend Development": 0.875,
-        "DevOps": 0.125
-    },
-    "DevOps": {
-        "DevOps и системное администрирование": 0.571429,
-        "Системный анализ и системный дизайн": 0.428571
-    },
-    "Career Growth": {
-        "Soft Skills": 0.5,
-        "Project Management": 0.3,
-        "Business Analysis": 0.2
-    },
-    "Подготовка к ОГЭ": {
-        "Математика": 0.666667,
-        "Русский язык": 0.333333
-    },
-    "Distance Learning": {
-        "Educational Technologies": 1.0
-    },
-    "Data Processing and Analysis": {
-        "Data Science": 0.5,
-        "Machine Learning": 0.3,
-        "Data Visualization": 0.2
-    },
-    "Object-Oriented Programming": {
-        "Programming Paradigms": 0.571429,
-        "Data Science": 0.428571
-    },
-    "Mathematics and Statistics": {
-        "Data Analysis": 0.5,
-        "Machine Learning": 0.3,
-        "Statistics": 0.2
-    },
-    "DevOps and System Administration": {
-        "DevOps": 0.6,
-        "System Administration": 0.3,
-        "Linux": 0.1
-    },
-    "Backend Development": {
-        "Web Development": 0.571429,
-        "Databases": 0.428571
-    },
-    "AI": {
-        "Machine Learning": 0.7,
-        "Neural Networks": 0.2,
-        "Deep Learning": 0.1
-    },
-    "Науки о жизни": {
-        "Генетика": 0.5,
-        "Медицина": 0.5
-    },
-    "Information Security": {
-        "Кибербезопасность": 0.5,
-        "Информационная безопасность и кибербезопасность": 0.3,
-        "Системы контроля версий": 0.2
-    },
-    "DevOps и системное администрирование": {
-        "DevOps": 0.4,
-        "Системный анализ и системный дизайн": 0.3,
-        "Linux": 0.3
-    },
-    "Фреймворки и библиотеки": {
-        "JavaScript": 0.4,
-        "Python": 0.3,
+        "Django": 0.4,
+        "FastAPI": 0.3,
         "C#": 0.3
     },
-    "Social and Humanities Sciences": {
-        "Marketing": 0.571429,
-        "Language Learning": 0.428571
+    "Data Science": {
+        "Machine Learning": 0.4,
+        "Data Analysis": 0.3,
+        "Artificial Intelligence": 0.3
     },
-    "Машинное обучение": {
-        "Data Science": 0.625,
-        "Neural Networks": 0.25,
-        "Deep Learning": 0.125
+    "Databases": {
+        "SQL": 0.5,
+        "DevOps": 0.2,
+        "Information Security": 0.3
     },
-    "Deep Learning": {
+    "Data Analysis": {
+        "Pandas": 0.4,
+        "Business Analysis": 0.3,
+        "Data Analytics": 0.3
+    },
+    "Algorithms": {
+        "Artificial Intelligence": 0.4,
         "Machine Learning": 0.3,
-        "Neural Networks": 0.4,
-        "Computer Vision": 0.2,
-        "NLP": 0.1
+        "Computer Vision": 0.3
     },
-    "Бизнес-анализ": {
-        "Business Analytics": 0.6,
-        "Finance": 0.2,
-        "Product Analytics": 0.1,
-        "Risk Management": 0.1
-    },
-    "Педагогика": {
-        "Educational Technologies": 0.5,
-        "Обучение преподавателей": 0.3,
-        "Образование молодёжи": 0.2
-    },
-    "Олимпиады и спортивное программирование": {
-        "Algorithms and data structures": 0.666667,
-        "Programming Paradigms": 0.333333
-    },
-    "English": {
-        "Language Learning": 0.833333,
-        "Communication": 0.166667
-    },
-    "Информационная безопасность и кибербезопасность": {
-        "Cryptocurrency": 0.333333,
-        "Information Security": 0.444444,
-        "System Administration": 0.222222
-    },
-    "Pandas": {
-        "Data Processing and Analysis": 0.6,
-        "Machine Learning": 0.2,
-        "Data Visualization": 0.1,
-        "NumPy": 0.1
-    },
-    "Finance": {
+    "Marketing": {
         "Business Analysis": 0.4,
-        "Personal finance and investing": 0.3,
-        "Economics": 0.2,
-        "Accounting": 0.1
+        "Soft Skills": 0.3,
+        "Project Management": 0.3
     },
-    "Проектный менеджмент": {
-        "Business Analysis": 0.4,
-        "DevOps и системное администрирование": 0.3,
-        "Управление бизнес-процессами": 0.3
+    "Soft Skills": {
+        "Marketing": 0.4,
+        "Project Management": 0.3,
+        "Business Analysis": 0.3
     },
-    "Programming for Children": {
-        "Scratch": 0.5,
-        "Python": 0.2,
-        "Введение в программирование": 0.3
-    },
-    "Веб-дизайн": {
-        "HTML/CSS": 0.6,
-        "Графический дизайн": 0.1,
-        "Figma": 0.3
-    },
-    "Figma": {
-        "Веб-дизайн": 0.875,
-        "Графический дизайн": 0.125
-    },
-    "Architecture": {
-        "Architectural Design": 0.4,
-        "Computer Vision": 0.3,
-        "Software Architecture": 0.3
+    "SQL": {
+        "Data Science": 0.5,
+        "Databases": 0.2,
+        "Data Analysis": 0.3
     },
     "Business Analysis": {
-        "Business Analytics": 0.4,
+        "Marketing": 0.4,
         "Project Management": 0.3,
         "Finance": 0.3
     },
-    "Business Analytics": {
-        "Data Analytics and Research": 0.5,
-        "Business Analysis": 0.2,
-        "Product Analytics": 0.3
-    },
-    "Frameworks and Libraries": {
+    "DevOps": {
         "Web Development": 0.4,
-        "Backend Development": 0.3,
-        "Frontend Development": 0.3
+        "Information Security": 0.3,
+        "Backend": 0.3
     },
-    "ExamPreparation": {
-        "Подготовка к ЕГЭ": 0.6,
-        "Подготовка к ОГЭ": 0.1,
-        "Mathematics and Statistics": 0.3
+    "Project Management": {
+        "DevOps": 0.3,
+        "Business Analysis": 0.3,
+        "Soft Skills": 0.4
     },
-    "Маркетинг": {
-        "Marketing and Sales": 0.5,
-        "Social and Humanities Sciences": 0.5
-    },
-    "C/C++": {
-        "Алгоритмы и структуры данных": 0.5,
-        "Операционные системы": 0.333333,
-        "Компьютерные сети": 0.166667
-    },
-    "Глубинное обучение": {
-        "Машинное обучение": 0.5,
-        "Нейронные сети": 0.3,
-        "Обработка и анализ данных": 0.1,
-        "Data Science": 0.1
-    },
-    "Language Learning": {
-        "Английский язык": 0.666667,
-        "Языки": 0.222222,
-        "Soft Skills": 0.111111
-    },
-    "Отраслевые курсы": {
-        "Бизнес-анализ": 0.3,
-        "Системная и бизнес аналитика": 0.3,
-        "Продуктовая аналитика": 0.2,
-        "Маркетинг": 0.2
-    },
-    "English Language": {
-        "Language Learning": 0.571429,
-        "ExamPreparation": 0.428571
-    },
-    "Операционные системы": {
-        "Linux": 0.5,
-        "Computer Networks": 0.2,
-        "System Administration": 0.3
-    },
-    "Компьютерные сети": {
-        "Computer Networks": 1.0
-    },
-    "Гибкие навыки": {
-        "Soft Skills": 0.5,
-        "Time Management and Productivity": 0.3,
-        "Communication": 0.2
-    },
-    "Поиск работы: резюме и собеседования": {
-        "Career Growth": 1.0
-    },
-    "Программное обеспечение и инструменты": {
-        "ПО и инструменты для разработки": 0.4,
-        "DevOps и системное администрирование": 0.3,
-        "Фреймворки и библиотеки": 0.3
-    },
-    "Графический дизайн": {
-        "Веб-дизайн": 0.625,
-        "Компьютерная графика": 0.375
-    },
-    "Testing": {
-        "Тестирование ПО": 0.857143,
-        "QA Automation": 0.142857
-    },
-    "Здоровье и безопасность": {
-        "Психическое здоровье": 0.571429,
-        "Поиск работы: резюме и собеседования": 0.428571
-    },
-    "Coding": {
-        "Введение в программирование": 0.571429,
-        "Алгоритмы и структуры данных": 0.428571
-    },
-    "Образование молодёжи": {
-        "Подготовка к экзаменам": 0.5,
-        "Образовательные технологии": 0.5
-    },
-    "Медицина": {
-        "Науки о жизни": 0.625,
-        "Data Science": 0.375
-    },
-    "Нейронные сети": {
-        "Машинное обучение": 0.6,
-        "Deep Learning": 0.3,
-        "Artificial Intelligence": 0.1
-    },
-    "Excel": {
-        "Excel and Google Sheets": 0.7,
-        "Data Processing and Analysis": 0.2,
-        "Business Analytics": 0.1
-    },
-    "Automation": {
-        "DevOps": 1.0
-    },
-    "Olympiads and Sports Programming": {
-        "Algorithms and data structures": 0.5,
-        "Programming for Children": 0.3,
-        "C/C++": 0.2
-    },
-    "Excel and Google Sheets": {
-        "Data Processing and Analysis": 0.6,
-        "Business Analytics": 0.3,
-        "Pandas": 0.1
-    },
-    "Scratch": {
-        "Programming Basics": 0.875,
-        "Programming for Children": 0.125
-    },
-    "Software Testing": {
-        "QA Automation": 0.4,
-        "Testing": 0.3,
-        "DevOps and System Administration": 0.3
-    },
-    "C#": {
-        "Backend Development": 0.5,
-        "Programming Paradigms": 0.3,
-        "Software Architecture": 0.2
-    },
-    "Linux": {
-        "Операционные системы": 0.571429,
-        "Информационная безопасность и кибербезопасность": 0.428571
-    },
-    "Computer Networks": {
-        "Компьютерные сети": 1.0
-    },
-    "API": {
-        "Веб-разработка": 1.0
-    },
-    "Инженерное проектирование и моделирование": {
-        "Инженерное дело": 1.0
-    },
-    "Образовательные технологии": {
-        "Дистанционное обучение": 0.571429,
-        "Разработка образовательных программ": 0.428571
-    },
-    "Web Design": {
-        "HTML/CSS": 0.4,
-        "Figma": 0.3,
-        "Graphic design": 0.3
+    "Information Security": {
+        "Cybersecurity": 0.5,
+        "DevOps": 0.3,
+        "Project Management": 0.2
     },
     "Frontend": {
-        "JavaScript": 0.5,
-        "HTML/CSS": 0.2,
-        "React": 0.3
-    },
-    "Frontend Development": {
         "JavaScript": 0.4,
         "React": 0.3,
         "TypeScript": 0.3
     },
-    "Физика": {
-        "Mathematics and Statistics": 0.75,
-        "Engineering": 0.25
+    "Java": {
+        "Backend": 0.75,
+        "C#": 0.25
     },
-    "Physics": {
-        "Mathematics and Statistics": 0.875,
-        "Engineering": 0.125
+    "Machine Learning": {
+        "Deep Learning": 0.4,
+        "Natural Language Processing": 0.3,
+        "Computer Vision": 0.3
     },
-    "Operating Systems": {
-        "Компьютерные сети": 0.4,
-        "Программирование для детей": 0.3,
-        "Linux": 0.2,
-        "Системный анализ и системный дизайн": 0.1
+    "JavaScript": {
+        "Frontend": 0.444444,
+        "React": 0.333333,
+        "TypeScript": 0.222222
     },
-    "TypeScript": {
-        "JavaScript": 0.555556,
-        "Frontend Development": 0.333333,
-        "React": 0.111111
+    "Go": {
+        "Backend": 0.4,
+        "DevOps": 0.3,
+        "Algorithms": 0.3
     },
-    "Фронтенд-разработка": {
-        "HTML/CSS": 0.444444,
-        "JavaScript": 0.333333,
-        "React": 0.222222
-    },
-    "Economics": {
-        "Finance": 0.4,
-        "Business Analysis": 0.3,
-        "Personal finance and investing": 0.2,
-        "Accounting": 0.1
-    },
-    "Autodesk Revit": {
-        "Architectural Design": 0.6,
-        "Construction": 0.2,
-        "Engineering Design and Modeling": 0.1,
-        "Градостроительство": 0.1
-    },
-    "Русский язык": {
-        "Подготовка к ОГЭ": 0.4,
-        "Подготовка к ЕГЭ": 0.3,
-        "Language Learning": 0.3
-    },
-    "Навыки обучения": {
-        "Образование молодёжи": 0.5,
-        "Личностный рост": 0.2,
-        "Soft Skills": 0.3
-    },
-    "Визуализация данных": {
-        "Data Science": 0.6,
-        "Аналитика и исследование данных": 0.1,
-        "Data Visualization": 0.3
-    },
-    "NumPy": {
-        "Python": 0.7,
+    "Deep Learning": {
         "Machine Learning": 0.2,
-        "Data Processing and Analysis": 0.1
+        "Natural Language Processing": 0.4,
+        "Computer Vision": 0.4
     },
-    "Управление бизнес-процессами": {
-        "Бизнес и менеджмент": 0.5,
+    "Finance": {
+        "Business Analysis": 0.5,
         "Project Management": 0.3,
-        "Business Analysis": 0.2
+        "Marketing": 0.2
     },
-    "Mental Health": {
-        "Психическое здоровье": 0.4,
-        "Поиск работы: резюме и собеседования": 0.3,
-        "Soft Skills": 0.3
-    },
-    "Деловая коммуникация": {
-        "Лидерство": 0.5,
-        "Работа в команде": 0.2,
-        "Business Analysis": 0.3
-    },
-    "Time Management and Productivity": {
-        "Планирование": 0.666667,
-        "Soft Skills": 0.333333
-    },
-    "Маркетинг и продажи": {
-        "Product Analytics": 1.0
-    },
-    "Law": {
-        "Risk Management": 1.0
-    },
-    "Product Analytics": {
-        "Business Analysis": 0.4,
-        "Data Analytics and Research": 0.3,
-        "Marketing and Sales": 0.3
-    },
-    "Алгебра и теория чисел": {
-        "Mathematics and Statistics": 0.5,
-        "Combinatorics": 0.2,
-        "Теория вероятностей и статистика": 0.3
-    },
-    "Personal finance and investing": {
-        "Economics": 0.571429,
-        "Finance": 0.428571
-    },
-    "Entrepreneurship": {
-        "Project Management": 1.0
-    },
-    "FastAPI": {
-        "Backend Development": 0.6,
-        "Python": 0.3,
-        "Web Development": 0.1
-    },
-    "История": {
-        "Social and Humanities Sciences": 0.4,
-        "Образование молодёжи": 0.3,
-        "Педагогика": 0.3
-    },
-    "History": {
-        "Social and Humanities Sciences": 0.714286,
-        "Language Learning": 0.285714
-    },
-    "Software Architecture": {
-        "Programming Paradigms": 0.4,
-        "Computer Science": 0.3,
-        "DevOps and System Administration": 0.3
-    },
-    "Microservices": {
-        "Backend Development": 0.6,
-        "Software Architecture": 0.2,
-        "DevOps": 0.2
-    },
-    "Экономика": {
-        "Business Analysis": 0.4,
-        "Finance": 0.3,
-        "Marketing": 0.3
-    },
-    "Спорт и фитнес": {
-        "Здоровье и безопасность": 0.5,
-        "Психическое здоровье": 0.3,
-        "Поиск работы: резюме и собеседования": 0.2
-    },
-    "Problem Solving": {
-        "Алгоритмы и структуры данных": 0.4,
-        "Программирование для детей": 0.3,
-        "Олимпиады и спортивное программирование": 0.3
-    },
-    "Разработка ПО для начинающих": {
-        "Введение в программирование": 1.0
-    },
-    "Разработка образовательных программ": {
-        "Образовательные технологии": 0.7,
-        "Педагогика": 0.2,
-        "Дистанционное обучение": 0.1
-    },
-    "Работа в команде": {
-        "Лидерство": 0.666667,
-        "Проектный менеджмент": 0.333333
-    },
-    "Психическое здоровье": {
-        "Time Management and Productivity": 0.4,
-        "Деловая коммуникация": 0.3,
-        "Личностный рост": 0.3
-    },
-    "Программирование для детей": {
-        "Scratch": 0.714286,
-        "Python": 0.285714
-    },
-    "Sustainability": {
-        "Social and Humanities Sciences": 1.0
-    },
-    "Планирование": {
-        "Project Management": 0.6,
-        "Time Management and Productivity": 0.3,
-        "Системный анализ и системный дизайн": 0.1
-    },
-    "Sports and Fitness": {
-        "Здоровье и безопасность": 0.571429,
-        "Mental Health": 0.428571
-    },
-    "Music and Dance": {
-        "Social and Humanities Sciences": 1.0
-    },
-    "NLP": {
-        "Artificial Intelligence": 0.4,
-        "Machine Learning": 0.3,
+    "Django": {
+        "Python": 0.4,
+        "Backend": 0.3,
         "Data Science": 0.3
     },
-    "Marketing and Sales": {
-        "Business Analysis": 0.571429,
-        "Social and Humanities Sciences": 0.428571
+    "FastAPI": {
+        "Python": 0.4,
+        "Backend": 0.3,
+        "SQL": 0.3
     },
-    "Дизайн интерфейсов": {
-        "Web Design": 0.4,
-        "Graphic design": 0.3,
-        "Frontend Development": 0.3
-    },
-    "Medicine": {
-        "Information Security and Cybersecurity": 1.0
-    },
-    "Математический анализ": {
-        "Математика и статистика": 0.571429,
-        "Data Science": 0.428571
-    },
-    "Information Security and Cybersecurity": {
-        "Информационная безопасность и кибербезопасность": 1.0
-    },
-    "C++": {
-        "Алгоритмы и структуры данных": 1.0
-    },
-    "Архитектура": {
-        "Архитектура ПО": 0.571429,
-        "Микросервисы": 0.428571
-    },
-    "Risk Management": {
-        "Управление рисками": 0.75,
-        "Бизнес-анализ": 0.25
-    },
-    "Kotlin": {
-        "Android": 0.5,
-        "Mobile App Development": 0.3,
-        "Programming Paradigms": 0.2
-    },
-    "Лидерство": {
-        "Менеджмент": 0.4,
-        "Бизнес и менеджмент": 0.3,
-        "Soft Skills": 0.3
-    },
-    "Construction": {
-        "Гражданское строительство": 0.6,
-        "Архитектурное проектирование": 0.3,
-        "Градостроительство": 0.1
-    },
-    "Robotics and Automation": {
-        "Робототехника и автоматизация": 0.875,
-        "Machine Learning": 0.125
-    },
-    "Accounting": {
-        "Finance": 0.5,
-        "Taxation": 0.3,
-        "Business Analysis": 0.2
-    },
-    "Computer Vision": {
-        "Machine Learning": 0.4,
-        "Deep Learning": 0.3,
-        "Neural Networks": 0.3
-    },
-    "Interface design": {
-        "Web Design": 0.5,
-        "Graphic design": 0.2,
-        "Figma": 0.3
-    },
-    "Graphic design": {
-        "Web Design": 1.0
-    },
-    "Личные финансы и инвестирование": {
-        "Экономика": 1.0
-    },
-    "Agriculture": {
-        "Сельское хозяйство": 1.0
-    },
-    "Системная и бизнес аналитика": {
-        "Business Analysis": 0.4,
-        "Data Analytics and Research": 0.3,
-        "Business Analytics": 0.3
-    },
-    "Продуктовая аналитика": {
-        "Product Analytics": 0.5,
-        "Data Analysis": 0.25,
-        "Marketing and Sales": 0.25
-    },
-    "Системный анализ и системный дизайн": {
-        "Software Architecture": 0.4,
-        "Microservices": 0.3,
-        "System Administration": 0.3
-    },
-    "Менеджмент": {
-        "Business Analysis": 0.5,
-        "Project Management": 0.5
+    "C#": {
+        "Backend": 0.4,
+        "DevOps": 0.3,
+        "Databases": 0.3
     },
     "React": {
-        "Frontend Development": 0.6,
+        "Frontend": 0.5,
         "JavaScript": 0.2,
-        "Web Development": 0.2
+        "Web Development": 0.3
     },
-    "Сельское хозяйство": {
-        "Agriculture": 0.4,
-        "Sustainability": 0.3,
-        "Engineering Design and Modeling": 0.3
+    "Pandas": {
+        "Data Science": 0.6,
+        "Data Analysis": 0.4
     },
-    "Statistics": {
-        "Data Analysis": 0.5,
-        "Mathematics and Statistics": 0.3,
-        "Machine Learning": 0.2
+    "TypeScript": {
+        "Frontend": 0.4,
+        "JavaScript": 0.3,
+        "Web Development": 0.3
     },
-    "Разное": {
-        "Business Analysis": 0.428571,
-        "Social and Humanities Sciences": 0.571429
+    "Natural Language Processing": {
+        "Machine Learning": 0.4,
+        "Artificial Intelligence": 0.3,
+        "Data Science": 0.3
     },
-    "Системы контроля версий": {
-        "Git": 0.823529,
-        "DevOps and System Administration": 0.176471
+    "Computer Vision": {
+        "Deep Learning": 0.4,
+        "Machine Learning": 0.3,
+        "Artificial Intelligence": 0.3
     },
-    "Taxation": {
-        "Finance": 0.6,
-        "Accounting": 0.3,
-        "Business Analytics": 0.1
+    "Школьные предметы": {
+        "Подготовка к экзаменам": 0.6,
+        "ExamPreparation": 0.4
     },
-    "Формирование навыков": {
-        "Личностный рост": 0.571429,
-        "Soft Skills": 0.428571
+    "Cybersecurity": {
+        "Information Security": 0.7,
+        "DevOps": 0.1,
+        "SQL": 0.2
     },
-    "Дистанционное обучение": {
-        "Distance Learning": 1.0
+    "Русский язык": {
+        "Подготовка к экзаменам": 0.7,
+        "Подготовка к ЕГЭ": 0.3
     },
-    "Database": {
-        "SQL": 0.6,
-        "Data Processing and Analysis": 0.3,
-        "DevOps and System Administration": 0.1
+    "Выпускные экзамены в школе": {
+        "ExamPreparation": 0.8,
+        "Подготовка к ЕГЭ": 0.2
     },
-    "Робототехника и автоматизация": {
-        "Robotics and Automation": 0.777778,
-        "Engineering Design and Modeling": 0.222222
+    "Подготовка к ЕГЭ": {
+        "ExamPreparation": 0.8,
+        "Школьные предметы": 0.2
     },
-    "Компьютерная графика": {
-        "Graphic design": 0.5,
-        "Web design": 0.3,
-        "Computer Vision": 0.2
+    "ExamPreparation": {
+        "Подготовка к экзаменам": 0.6,
+        "Выпускные экзамены в школе": 0.3,
+        "Подготовка к ЕГЭ": 0.1
     },
-    "Communication": {
-        "Soft Skills": 0.4,
-        "Деловая коммуникация": 0.3,
-        "Time Management and Productivity": 0.3
-    },
-    "Engineering Design and Modeling": {
-        "Инженерное проектирование и моделирование": 0.5,
-        "Computer Networks": 0.2,
-        "Autodesk Revit": 0.3
-    },
-    "Управление рисками": {
-        "Risk Management": 0.6,
-        "Менеджмент": 0.2,
-        "Антикризисное управление": 0.2
-    },
-    "Антикризисное управление": {
-        "Управление бизнес-процессами": 0.4,
-        "Менеджмент": 0.3,
-        "Лидерство": 0.3
-    },
-    "Russian language": {
-        "Language Learning": 0.714286,
-        "Подготовка к ОГЭ": 0.285714
-    },
-    "Web design": {
-        "HTML/CSS": 0.4,
-        "Frontend Development": 0.3,
-        "Graphic design": 0.3
-    },
-    "Tilda": {
-        "Web design": 0.5,
-        "HTML/CSS": 0.2,
-        "Figma": 0.3
-    },
-    "Prompt Engineering": {
-        "NLP": 0.75,
-        "Machine Learning": 0.25
-    },
-    "QA Automation": {
-        "Software Testing": 0.4,
-        "Programming for Children": 0.2,
-        "Automation": 0.4
-    },
-    "Интернет-маркетинг": {
-        "Marketing and Sales": 0.714286,
-        "Social and Humanities Sciences": 0.285714
-    },
-    "Banking": {
-        "Finance": 0.4,
-        "Business Analysis": 0.3,
-        "Taxation": 0.3
-    },
-    "Гражданское строительство": {
-        "Construction": 0.5,
-        "Engineering Design and Modeling": 0.25,
-        "Architectural Design": 0.25
-    },
-    "Архитектурное проектирование": {
-        "Architectural Design": 1.0
-    },
-    "Градостроительство": {
-        "Construction": 1.0
-    },
-    "Android": {
-        "Mobile App Development": 0.6,
-        "Java": 0.2,
-        "Kotlin": 0.2
-    },
-    "Mobile App Development": {
-        "Android": 1.0
-    },
-    "Operational Activities": {
-        "Project Management": 0.714286,
-        "Business Analysis": 0.285714
-    },
-    "Управление персоналом": {
-        "Лидерство": 0.571429,
-        "Soft Skills": 0.428571
-    },
-    "Architectural Design": {
-        "Construction": 1.0
-    },
-    "Музыка и танец": {
-        "Дизайн и медиа": 0.4,
-        "Графический дизайн": 0.3,
-        "Веб-дизайн": 0.3
-    },
-    "Functional Programming": {
-        "Programming Paradigms": 0.714286,
-        "Algorithms and data structures": 0.285714
-    },
-    "HTML": {
-        "HTML/CSS": 0.6,
-        "Frontend Development": 0.3,
-        "Web Development": 0.1
-    },
-    "PostgreSQL": {
-        "Databases": 0.7,
-        "Data Processing and Analysis": 0.2,
-        "DevOps and System Administration": 0.1
-    },
-    "Neural networks": {
-        "Machine Learning": 0.625,
-        "Deep Learning": 0.375
-    },
-    "HTML/CSS": {
-        "JavaScript": 0.4,
-        "Web Development": 0.3,
-        "Frontend Development": 0.3
-    },
-    "Машиностроение": {
-        "Инженерное дело": 0.625,
-        "Engineering Design and Modeling": 0.25,
-        "Computer Networks": 0.125
-    },
-    "Электротехника": {
-        "Операционные системы": 0.428571,
-        "Компьютерные сети": 0.428571,
-        "Программирование для детей": 0.142857
-    },
-    "System Administration": {
-        "DevOps и системное администрирование": 0.6,
-        "Информационная безопасность и кибербезопасность": 0.3,
-        "Linux": 0.1
-    },
-    "Programming Basics": {
-        "Python": 0.4,
-        "Java": 0.3,
-        "C/C++": 0.3
-    },
-    "Архитектура ПО": {
-        "Software Architecture": 0.4,
-        "Microservices": 0.3,
-        "DevOps and System Administration": 0.3
-    },
-    "Микросервисы": {
-        "Backend Development": 0.5,
-        "DevOps": 0.2,
-        "API": 0.3
-    },
-    "Генетика": {
-        "Науки о жизни": 0.666667,
-        "Математический анализ": 0.333333
-    },
-    "Cryptocurrency": {
-        "Finance": 0.666667,
-        "Information Security and Cybersecurity": 0.333333
-    },
-    "Combinatorics": {
-        "Mathematics and Statistics": 0.5,
-        "Algorithms and data structures": 0.3,
-        "Теория вероятностей и статистика": 0.2
-    },
-    "Теория вероятностей и статистика": {
-        "Математика и статистика": 0.4,
-        "Data Analysis": 0.3,
-        "Machine Learning": 0.3
-    },
-    "Git": {
-        "Системы контроля версий": 0.714286,
-        "DevOps и системное администрирование": 0.285714
-    },
-    "Кибербезопасность": {
-        "Информационная безопасность и кибербезопасность": 0.666667,
-        "Cryptocurrency": 0.333333
-    },
-    "Парадигмы программирования": {
-        "Programming Paradigms": 0.7,
-        "Functional Programming": 0.2,
-        "Object-Oriented Programming": 0.1
-    },
-    "Healthcare": {
-        "Медицина": 0.714286,
-        "Data Science": 0.285714
+    "Подготовка к экзаменам": {
+        "ExamPreparation": 0.777778,
+        "Школьные предметы": 0.222222
     }
 }

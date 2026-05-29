@@ -1,13 +1,14 @@
 import pytest
 
-from app.api import router_courses
+from app.api import router_courses, router_user
 from app.schemas.models import RecommendationInput
 from services.query_understanding import QueryIntent
 
 
 class Response:
-    def __init__(self, data):
+    def __init__(self, data, count=None):
         self.data = data
+        self.count = len(data or []) if count is None else count
 
 
 class FakeTable:
@@ -34,6 +35,9 @@ class FakeTable:
         return self
 
     def limit(self, *args, **kwargs):
+        return self
+
+    def range(self, *args, **kwargs):
         return self
 
     def execute(self):
@@ -188,6 +192,7 @@ def test_advanced_recommendations_adds_personalization_from_likes(monkeypatch):
     )
 
     assert result["main_results"][0]["title"] == "Python для анализа данных"
+    assert result["main_results"][0]["is_liked"] is False
     assert result["main_results"][0]["personalization"]["matched_tags"] == ["Python", "Pandas"]
     assert result["main_results"][0]["reason"] == "Похоже на ваши лайкнутые курсы по тегам: Python, Pandas"
     assert result["ml_enrichment"]["user_profile"]["active"] is True
@@ -198,6 +203,85 @@ def test_advanced_recommendations_adds_personalization_from_likes(monkeypatch):
         "Pandas",
         "Data Analysis",
     ]
+
+
+def test_user_profile_returns_preferences_and_public_liked_courses(monkeypatch):
+    fake_supabase = FakeSupabase([])
+    fake_supabase.table_data["users"] = [
+        {
+            "preferences": {
+                "skills": {"Python": "beginner"},
+                "learning_goals": ["SQL"],
+                "time_per_week": "high",
+            }
+        }
+    ]
+    fake_supabase.table_data["user_likes"] = [{"course_id": 99}]
+    fake_supabase.table_data["courses"] = [
+        {
+            "id": 99,
+            "title": "Pandas liked",
+            "url": "https://stepik.org/course/99",
+            "difficulty": "easy",
+            "learners_count": 120,
+            "rating": 4.8,
+            "tags": ["Python", "Pandas"],
+            "normalized_tags": ["Python", "Pandas"],
+            "raw_tags": ["Информационные технологии", "Python"],
+            "tag_meta": {"dropped_tags": ["Информационные технологии"]},
+            "domain": "it",
+            "embedding": [1.0, 0.0],
+            "cluster_id": 4,
+            "is_paid": False,
+            "price": None,
+        }
+    ]
+    monkeypatch.setattr(router_user, "supabase", fake_supabase)
+
+    result = router_user.get_profile(user_id="user-1")
+
+    assert result["status"] == "success"
+    profile = result["profile"]
+    assert profile["preferences"] == {
+        "skills": {"Python": "beginner"},
+        "learning_goals": ["SQL"],
+        "time_per_week": "high",
+    }
+    assert profile["liked_course_ids"] == [99]
+    assert profile["liked_courses_count"] == 1
+    liked_course = profile["liked_courses"][0]
+    assert liked_course["id"] == 99
+    assert liked_course["tags"] == ["Python", "Pandas"]
+    assert liked_course["is_liked"] is True
+    assert "raw_tags" not in liked_course
+    assert "normalized_tags" not in liked_course
+    assert "tag_meta" not in liked_course
+    assert "domain" not in liked_course
+    assert "embedding" not in liked_course
+    assert "cluster_id" not in liked_course
+
+
+def test_user_profile_returns_defaults_without_saved_profile(monkeypatch):
+    fake_supabase = FakeSupabase([])
+    fake_supabase.table_data["users"] = []
+    fake_supabase.table_data["user_likes"] = []
+    monkeypatch.setattr(router_user, "supabase", fake_supabase)
+
+    result = router_user.get_profile(user_id="user-1")
+
+    assert result == {
+        "status": "success",
+        "profile": {
+            "preferences": {
+                "skills": {},
+                "learning_goals": [],
+                "time_per_week": "medium",
+            },
+            "liked_course_ids": [],
+            "liked_courses_count": 0,
+            "liked_courses": [],
+        },
+    }
 
 
 def test_advanced_recommendations_cleans_broad_tags_from_personalization(monkeypatch):
@@ -508,6 +592,7 @@ def test_frontend_api_uses_context_relevant_react_like(monkeypatch):
     )
 
     assert result["main_results"][0]["id"] == 10
+    assert result["main_results"][0]["is_liked"] is False
     assert result["main_results"][0]["reason"] == "Похоже на ваши лайкнутые курсы по тегам: Frontend, React"
     assert result["main_results"][1]["personalization"]["matched_tags"] == []
     assert result["main_results"][1]["personalization"]["embedding_similarity"] == 0.0
@@ -517,6 +602,49 @@ def test_frontend_api_uses_context_relevant_react_like(monkeypatch):
         "React",
     ]
     assert result["ml_enrichment"]["user_profile"]["context_liked_courses_count"] == 1
+
+
+def test_advanced_recommendations_marks_already_liked_course(monkeypatch):
+    fake_supabase = FakeSupabase(
+        [
+            {
+                "id": 91,
+                "title": "React liked",
+                "url": "https://stepik.org/course/91",
+                "difficulty": "easy",
+                "learners_count": 200,
+                "rating": 4.5,
+                "tags": ["Frontend", "React"],
+                "is_paid": False,
+                "price": None,
+                "embedding": [0.0, 1.0],
+                "cluster_id": 4,
+                "similarity": 0.55,
+            }
+        ]
+    )
+    fake_supabase.table_data["user_likes"] = [{"course_id": 91}]
+    fake_supabase.table_data["courses"] = [
+        {
+            "id": 91,
+            "title": "React liked",
+            "tags": ["Frontend", "React"],
+            "embedding": [0.0, 1.0],
+            "cluster_id": 4,
+        }
+    ]
+    monkeypatch.setattr(router_courses, "MARKOV_MATRIX", {})
+    monkeypatch.setattr(router_courses, "embed_query", lambda query: [0.0, 1.0])
+    monkeypatch.setattr(router_courses, "supabase", fake_supabase)
+
+    result = router_courses.get_advanced_recommendations(
+        RecommendationInput(query="react", limit=1),
+        user_id="user-1",
+    )
+
+    assert result["main_results"][0]["id"] == 91
+    assert result["main_results"][0]["is_liked"] is True
+    assert result["main_results"][0]["personalization"]["already_liked"] is True
 
 
 @pytest.mark.parametrize("saved_level", ["Advanced", "high"])
@@ -623,3 +751,101 @@ def test_baseline_filters_easy_course_for_high_matching_skill(monkeypatch):
     result = router_courses.get_recommend_baseline(user_id="user-1", limit=10)
 
     assert [course["id"] for course in result["courses"]] == [2]
+    assert result["courses"][0]["is_liked"] is False
+
+
+def test_baseline_marks_liked_courses(monkeypatch):
+    fake_supabase = FakeSupabase([])
+    fake_supabase.table_data["users"] = [
+        {"preferences": {"skills": {}, "learning_goals": []}}
+    ]
+    fake_supabase.table_data["user_likes"] = [{"course_id": 1}]
+    fake_supabase.table_data["courses"] = [
+        {
+            "id": 1,
+            "title": "Popular Python",
+            "url": "https://stepik.org/course/1",
+            "difficulty": "easy",
+            "tags": ["Python"],
+            "learners_count": 20,
+            "rating": 4.7,
+            "is_paid": False,
+            "price": None,
+        }
+    ]
+    monkeypatch.setattr(router_courses, "supabase", fake_supabase)
+
+    result = router_courses.get_recommend_baseline(user_id="user-1", limit=10)
+
+    assert result["courses"][0]["id"] == 1
+    assert result["courses"][0]["is_liked"] is True
+
+
+def test_catalog_marks_liked_courses_when_user_is_known(monkeypatch):
+    fake_supabase = FakeSupabase([])
+    fake_supabase.table_data["user_likes"] = [{"course_id": 1}]
+    fake_supabase.table_data["courses"] = [
+        {
+            "id": 1,
+            "title": "Popular Python",
+            "url": "https://stepik.org/course/1",
+            "difficulty": "easy",
+            "tags": ["Python"],
+            "learners_count": 20,
+            "rating": 4.7,
+            "is_paid": False,
+            "price": None,
+        },
+        {
+            "id": 2,
+            "title": "Popular SQL",
+            "url": "https://stepik.org/course/2",
+            "difficulty": "easy",
+            "tags": ["SQL"],
+            "learners_count": 10,
+            "rating": 4.5,
+            "is_paid": False,
+            "price": None,
+        },
+    ]
+    monkeypatch.setattr(router_courses, "supabase", fake_supabase)
+
+    result = router_courses.get_courses_catalog(
+        page=1,
+        size=12,
+        sort_by="popular",
+        difficulty=None,
+        search=None,
+        user_id="user-1",
+    )
+
+    assert [course["is_liked"] for course in result["courses"]] == [True, False]
+
+
+def test_catalog_works_without_authenticated_user(monkeypatch):
+    fake_supabase = FakeSupabase([])
+    fake_supabase.table_data["courses"] = [
+        {
+            "id": 1,
+            "title": "Popular Python",
+            "url": "https://stepik.org/course/1",
+            "difficulty": "easy",
+            "tags": ["Python"],
+            "learners_count": 20,
+            "rating": 4.7,
+            "is_paid": False,
+            "price": None,
+        }
+    ]
+    monkeypatch.setattr(router_courses, "supabase", fake_supabase)
+
+    result = router_courses.get_courses_catalog(
+        page=1,
+        size=12,
+        sort_by="popular",
+        difficulty=None,
+        search=None,
+        user_id=None,
+    )
+
+    assert result["courses"][0]["is_liked"] is False

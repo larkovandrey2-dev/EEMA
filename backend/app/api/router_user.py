@@ -6,11 +6,18 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.core.database import supabase
 from app.schemas.models import UserPreferences, TextInput
 from app.core.security import get_current_user_id
+from app.api.router_courses import get_public_course
 from services.llm_request import ask_yagpt
+from services.personalization import load_liked_courses
 import os
 
 router = APIRouter(prefix="/api/users", tags=["Users"])
 
+DEFAULT_PREFERENCES = {
+    "skills": {},
+    "learning_goals": [],
+    "time_per_week": "medium",
+}
 
 
 @router.post("/parse-skills")
@@ -66,6 +73,37 @@ def update_profile(
         return {"status": "success", "message": "Профиль сохранен"}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
+
+
+@router.get("/profile")
+def get_profile(user_id: str = Depends(get_current_user_id)):
+    try:
+        user_resp = supabase.table("users").select("preferences").eq("id", user_id).execute()
+        preferences = DEFAULT_PREFERENCES
+        if user_resp.data:
+            preferences = {
+                **DEFAULT_PREFERENCES,
+                **(user_resp.data[0].get("preferences") or {}),
+            }
+
+        liked_courses = load_liked_courses(supabase, user_id)
+        liked_course_ids = {course["id"] for course in liked_courses if course.get("id") is not None}
+        public_liked_courses = [
+            get_public_course(course, liked_course_ids)
+            for course in liked_courses
+        ]
+
+        return {
+            "status": "success",
+            "profile": {
+                "preferences": preferences,
+                "liked_course_ids": sorted(liked_course_ids),
+                "liked_courses_count": len(public_liked_courses),
+                "liked_courses": public_liked_courses,
+            },
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/generate-test-token")
