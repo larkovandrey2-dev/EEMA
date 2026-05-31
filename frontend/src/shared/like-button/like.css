@@ -1,0 +1,18 @@
+.courseUnit__like {
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  font-size: 22px;
+  color: #94a3b8;
+
+  transition: all 0.2s ease;
+}
+
+.courseUnit__like:hover {
+  transform: scale(1.1);
+}
+
+.courseUnit__like.liked {
+  color: #ef4444;
+}

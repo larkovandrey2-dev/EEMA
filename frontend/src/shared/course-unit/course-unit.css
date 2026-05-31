@@ -18,6 +18,15 @@
   border-color: rgba(124, 58, 237, 0.25);
 }
 
+.courseUnit__reason {
+  font-size: 14px;
+  line-height: 1.5;
+
+  color: light-dark(#475569, #cbd5e1);
+
+  padding-left: 12px;
+  border-left: 3px solid #7c3aed;
+}
 
 .courseUnit__top {
   display: flex;

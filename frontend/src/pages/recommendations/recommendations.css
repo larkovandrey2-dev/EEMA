@@ -73,7 +73,6 @@
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .temp-button.logout-btn {

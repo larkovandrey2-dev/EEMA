@@ -10,7 +10,7 @@ export const CourseGroup: React.FC<CourseGroupProps> = ({ courses }) => {
   return (
     <div className="course-grid">
       {courses.map((course) => (
-        <CourseUnit key={course.id} id={course.id} difficulty={course.difficulty} title={course.title} url={course.url} is_paid={course.is_paid} price={course.price} learners_count={course.learners_count} stepik_id={course.stepik_id} rating={course.rating} similarity={course.similarity} summary={course.summary} updated_at={course.updated_at} tags={course.tags} />
+        <CourseUnit key={course.id} id={course.id} difficulty={course.difficulty} title={course.title} url={course.url} is_paid={course.is_paid} price={course.price} learners_count={course.learners_count} stepik_id={course.stepik_id} rating={course.rating} score={course.personalization.final_score} reason={course.reason} summary={course.summary} updated_at={course.updated_at} tags={course.tags} is_liked={course.is_liked} />
       ))}
     </div>
   );

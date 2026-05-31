@@ -1,23 +1,67 @@
 import os
-import sys
-
-current_path = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(current_path, '..', '..', '..')) # Поднимаемся на 2 уровня: из app -> в backend -> в EEMA
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
 from collections import defaultdict, Counter
 from app.schemas.models import RecommendationInput
 from fastapi import APIRouter, Query, HTTPException
 from fastapi.params import Depends
 from datetime import datetime, timezone
-from app.core.security import get_current_user_id
+from app.core.security import get_current_user_id, get_optional_current_user_id
 from app.core.database import supabase
 import json
 from services.embed_query import embed_query
-from data_pipeline.db_client import get_updating_date
+from services.difficulty_policy import (
+    filter_courses_for_user_skills,
+    normalize_user_skills,
+    preferred_course_difficulty,
+    profile_level_rank,
+)
+from services.personalization import (
+    build_user_interest_profile,
+    get_scoring_tags,
+    get_public_user_profile,
+    load_liked_course_ids,
+    load_liked_courses,
+    personalize_courses,
+)
+from services.query_understanding import QueryIntent, understand_query
 
 router = APIRouter(prefix="/api/courses", tags=["Courses"])
+
+RAG_MATCH_THRESHOLDS = [0.55, 0.45, 0.35]
+
+BASE_MARKOV_TAGS = {
+    "Python",
+    "JavaScript",
+    "TypeScript",
+    "Java",
+    "C++",
+    "C#",
+    "Go",
+    "SQL",
+}
+
+PUBLIC_COURSE_FIELDS = {
+    "id",
+    "title",
+    "url",
+    "difficulty",
+    "learners_count",
+    "rating",
+    "tags",
+    "is_paid",
+    "price",
+    "is_liked",
+    "markov_reason",
+    "cluster_reason",
+    "reason",
+    "personalization",
+}
+
+INTERNAL_COURSE_FIELDS = {
+    "raw_tags",
+    "normalized_tags",
+    "tag_meta",
+    "domain",
+}
 
 MARKOV_MATRIX_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "../../ML/scripts/markov_matrix.json")
 try:
@@ -27,7 +71,93 @@ except FileNotFoundError:
     MARKOV_MATRIX = {}
     print("Файл markov_matrix.json не найден")
 
-def get_markov_next_tags(current_tags: list, top_k:int = 2) -> list:
+
+def get_public_course(course: dict, liked_course_ids: set[int] | None = None) -> dict:
+    public_course = {
+        key: value
+        for key, value in course.items()
+        if key in PUBLIC_COURSE_FIELDS and key not in INTERNAL_COURSE_FIELDS
+    }
+    if "tags" not in public_course:
+        public_course["tags"] = course.get("normalized_tags") or course.get("tags") or []
+    if liked_course_ids is None:
+        public_course["is_liked"] = bool(course.get("is_liked", False))
+    else:
+        public_course["is_liked"] = course.get("id") in liked_course_ids
+    return public_course
+
+
+def get_course_tags(course: dict) -> list:
+    return get_scoring_tags(course)
+
+
+def get_empty_advanced_response(query: str, user_profile: dict | None = None) -> dict:
+    return {
+        "strategy": "rag_plus_classic_ml",
+        "search_query": query,
+        "main_results": [],
+        "ml_enrichment": {
+            "anchor_course_title": "",
+            "cluster_neighbors": [],
+            "markov_roadmap": [],
+            "user_profile": user_profile or {
+                "active": False,
+                "liked_courses_count": 0,
+                "top_tags": [],
+                "query_intent_tags": [],
+                "query_matched_liked_tags": [],
+                "context_liked_courses_count": 0,
+            }
+        }
+    }
+
+
+def match_courses_with_fallback(query_embedding: list, match_count: int):
+    last_response = None
+    for threshold in RAG_MATCH_THRESHOLDS:
+        rpc_params = {
+            "query_embedding": query_embedding,
+            "match_threshold": threshold,
+            "match_count": match_count
+        }
+        response = supabase.rpc("match_courses", rpc_params).execute()
+        last_response = response
+        result_count = len(response.data or [])
+        print(f"RAG match_courses threshold={threshold} count={result_count}")
+        if response.data:
+            return response
+    return last_response
+
+
+def get_markov_seed_tags(courses: list[dict], query_intent: QueryIntent | None, top_k: int = 3) -> list[str]:
+    query_tags = list(query_intent.tags if query_intent else [])
+    query_specific_tags = [tag for tag in (query_intent.primary_tags if query_intent else []) if
+                           tag not in BASE_MARKOV_TAGS]
+    if not query_specific_tags:
+        query_specific_tags = [tag for tag in query_tags if tag not in BASE_MARKOV_TAGS]
+
+    course_tag_counts = Counter()
+    for course in courses[:3]:
+        course_tag_counts.update(get_course_tags(course))
+
+    dominant_tags: list[str] = []
+    if query_specific_tags:
+        for tag in query_specific_tags:
+            if tag in course_tag_counts or tag in MARKOV_MATRIX:
+                dominant_tags.append(tag)
+        if dominant_tags:
+            return dominant_tags[:top_k]
+
+    for tag, _ in course_tag_counts.most_common():
+        if tag not in BASE_MARKOV_TAGS:
+            dominant_tags.append(tag)
+        if len(dominant_tags) >= top_k:
+            break
+
+    return dominant_tags
+
+
+def get_markov_next_tags(current_tags: list, top_k: int = 2) -> list:
     STOP_TAGS = {
         "Информационные технологии",
         "Языки программирования",
@@ -43,14 +173,10 @@ def get_markov_next_tags(current_tags: list, top_k:int = 2) -> list:
     for tag in meaningful_tags:
         transitions = MARKOV_MATRIX.get(tag, {})
         for next_tag, prob in transitions.items():
-            if next_tag not in current_tags:
+            if next_tag not in current_tags and next_tag not in STOP_TAGS:
                 next_step_scores[next_tag] += prob
-    print(next_step_scores)
     sorted_steps = sorted(next_step_scores.items(), key=lambda x: x[1], reverse=True)
     return [tag for tag, score in sorted_steps[:top_k]]
-
-
-
 
 
 @router.get("/recommend/baseline")
@@ -62,40 +188,36 @@ def get_recommend_baseline(
         if not user_resp.data:
             raise HTTPException(status_code=404, detail="Пользователь не найден")
         prefs = user_resp.data[0].get("preferences", {})
-        skills = prefs.get("skills", {})
+        skills = normalize_user_skills(prefs.get("skills", {}))
         goals = prefs.get("learning_goals", [])
-        map_diffs = {
-            "beginner": "easy",
-            "Beginner": "easy",
-            "medium": "normal",
-            "advanced": "hard",
-            "hard": "hard",
-            "Intermediate": "normal",
-            "intermediate": "normal",
-        }
+        liked_course_ids = load_liked_course_ids(supabase, user_id)
         recommendations = []
         used_topics = []
         for goal in goals[:2]:
             goal = goal.capitalize()
-            query = supabase.table("courses").select("id","title","url","difficulty","is_paid","price","learners_count")
-            query = query.contains("tags", [goal]).eq("difficulty","easy")
-            response = query.order("learners_count",desc=True).limit(3).execute()
+            query = supabase.table("courses").select("id", "title", "url", "difficulty", "tags", "is_paid", "price",
+                                                     "learners_count")
+            query = query.contains("tags", [goal]).eq("difficulty", "easy")
+            response = query.order("learners_count", desc=True).limit(3).execute()
             if response.data:
                 recommendations.extend(response.data)
                 used_topics.append(f"Цель: {goal} (easy)")
 
         for skill, skill_level in list(skills.items())[:2]:
-            target_diff = map_diffs.get(skill_level.lower(), "easy")
-            query = supabase.table("courses").select("id","title","url","difficulty","is_paid","price","learners_count")
+            target_diff = preferred_course_difficulty(skill_level)
+            query = supabase.table("courses").select("id", "title", "url", "difficulty", "tags", "is_paid", "price",
+                                                     "learners_count")
             query = query.contains("tags", [skill]).eq("difficulty", target_diff)
             response = query.order("learners_count", desc=True).limit(3).execute()
             if response.data:
                 recommendations.extend(response.data)
                 used_topics.append(f"Прокачка: {skill} ({target_diff})")
-        if not recommendations or len(recommendations) < limit:
-            query = supabase.table("courses").select("id","title", "url", "difficulty", "is_paid", "price", "learners_count")
-            query = query.order("learners_count", desc=True).limit(limit).execute()
-            recommendations.extend(query.data)
+        recommendations = filter_courses_for_user_skills(recommendations, skills)
+        if len(recommendations) < limit:
+            query = supabase.table("courses").select("id", "title", "url", "difficulty", "tags", "is_paid", "price",
+                                                     "learners_count")
+            query = query.order("learners_count", desc=True).limit(limit * 5).execute()
+            recommendations.extend(filter_courses_for_user_skills(query.data or [], skills))
             used_topics.append("Общая популярность")
         unique_courses = {course["id"]: course for course in recommendations}
         final_rec = list(unique_courses.values())[:limit]
@@ -105,7 +227,7 @@ def get_recommend_baseline(
             "strategy": "smart_baseline",
             "topics_used": used_topics,
             "results_count": len(final_rec),
-            "courses": final_rec
+            "courses": [get_public_course(course, liked_course_ids) for course in final_rec]
         }
 
 
@@ -165,67 +287,38 @@ def get_advanced_recommendations(
     try:
         user_resp = supabase.table("users").select("preferences").eq("id", user_id).execute()
         prefs = user_resp.data[0].get("preferences", {}) if user_resp.data else {}
-        user_skills = prefs.get("skills", {})
-        LEVEL_WEIGHTS = {
-            "beginner": 1, "easy": 1,
-            "medium": 2, "normal": 2,
-            "hard": 3, "expert": 3, "high": 3
-        }
-        user_skills_numeric = {
-            k.lower(): LEVEL_WEIGHTS.get(v.lower(), 1)
-            for k, v in user_skills.items()
-        }
+        user_skills = normalize_user_skills(prefs.get("skills", {}))
         user_query = embed_query(req.query)
-        rpc_params = {
-            "query_embedding": user_query,
-            "match_threshold": 0.55,
-            "match_count": req.limit * 5
-        }
-        rag_response = supabase.rpc("match_courses", rpc_params).execute()
+        liked_courses = load_liked_courses(supabase, user_id)
+        liked_course_ids = {course["id"] for course in liked_courses if course.get("id") is not None}
+        query_intent = understand_query(req.query, query_embedding=user_query)
+        user_interest_profile = build_user_interest_profile(liked_courses, query_intent=query_intent)
+        public_user_profile = get_public_user_profile(user_interest_profile)
+
+        rag_response = match_courses_with_fallback(user_query, req.limit * 5)
         if not rag_response.data:
-            return {
-                "strategy": "rag_plus_classic_ml",
-                "search_query": "",
-                # Основная выдача от RAG
-                "main_results": [],
-                # Дополнительные данные от классического ML
-                "ml_enrichment": {
-                    "anchor_course_title": [],
-                    "cluster_neighbors": [],
-                    "markov_roadmap": []
-                }
-            }
-        expert_skills = [k.lower() for k, v in user_skills.items() if v in ["hard", "expert"]]
+            return get_empty_advanced_response(req.query, public_user_profile)
 
-        filtered_courses = []
-        for course in rag_response.data:
-            course_diff_str = (course.get("difficulty") or "easy").lower()
-            course_diff_num = LEVEL_WEIGHTS.get(course_diff_str, 1)
-
-            course_tags_lower = [t.lower() for t in course.get("tags", [])]
-
-            is_too_easy = False
-
-            for tag in course_tags_lower:
-                if tag in user_skills_numeric:
-                    user_level_num = user_skills_numeric[tag]
-                    if (user_level_num - course_diff_num) > 1:
-                        is_too_easy = True
-                        break
-            if not is_too_easy:
-                filtered_courses.append(course)
-        if not filtered_courses:
-            courses = rag_response.data[:req.limit]
-        else:
-            courses = filtered_courses[:req.limit]
+        candidate_courses = filter_courses_for_user_skills(rag_response.data, user_skills)
+        if not candidate_courses:
+            return get_empty_advanced_response(req.query, public_user_profile)
+        courses = personalize_courses(
+            candidate_courses,
+            user_interest_profile,
+            query_intent=query_intent,
+            user_skills=user_skills,
+            limit=req.limit,
+        )
+        if not courses:
+            return get_empty_advanced_response(req.query, public_user_profile)
         anchor_course = courses[0]
-        all_top_tags = []
-        for c in courses[:3]:
-            all_top_tags.extend(c.get("tags", []))
-        tag_counts = Counter(all_top_tags)
-        dominant_tags = [tag for tag, count in tag_counts.most_common(3)]
+        dominant_tags = get_markov_seed_tags(courses, query_intent, top_k=3)
         next_tags = get_markov_next_tags(dominant_tags, top_k=2)
-        known_skills = [skill.lower() for skill, level in user_skills.items() if level in ["medium", "high", "expert", "hard", "normal"]]
+        known_skills = [
+            skill.lower()
+            for skill, level in user_skills.items()
+            if profile_level_rank(level) >= 2
+        ]
         filtered_next_tags = []
         for tag in next_tags:
             if tag.lower() not in known_skills:
@@ -233,7 +326,7 @@ def get_advanced_recommendations(
         next_tags = filtered_next_tags
         next_step_courses = []
         if next_tags:
-            markov_query = supabase.table("courses").select("id, title, url, difficulty, learners_count, tags")\
+            markov_query = supabase.table("courses").select("id, title, url, difficulty, learners_count, tags") \
                 .neq("id", anchor_course["id"])
             top_next_tag = next_tags[0]
             markov_response = markov_query.contains("tags", [top_next_tag]) \
@@ -241,9 +334,9 @@ def get_advanced_recommendations(
                 .limit(2) \
                 .execute()
 
-            for c in markov_response.data:
+            for c in filter_courses_for_user_skills(markov_response.data or [], user_skills):
                 c["markov_reason"] = f"Логичный следующий шаг (Тема: {top_next_tag})"
-                next_step_courses.append(c)
+                next_step_courses.append(get_public_course(c, liked_course_ids))
 
         anchor_emb = anchor_course["embedding"]
         anchor_id = anchor_course["id"]
@@ -257,19 +350,20 @@ def get_advanced_recommendations(
                 "match_count": 3
             }
             cluster_response = supabase.rpc("get_cluster_neighbors", cluster_params).execute()
-            for c in cluster_response.data:
+            for c in filter_courses_for_user_skills(cluster_response.data or [], user_skills):
                 c["cluster_reason"] = "Похожие курсы по тематике (Кластеризация)"
-                related_from_clusters.append(c)
+                related_from_clusters.append(get_public_course(c, liked_course_ids))
         return {
             "strategy": "rag_plus_classic_ml",
             "search_query": req.query,
             # Основная выдача от RAG
-            "main_results": courses,
+            "main_results": [get_public_course(course, liked_course_ids) for course in courses],
             # Дополнительные данные от классического ML
             "ml_enrichment": {
                 "anchor_course_title": anchor_course["title"],
                 "cluster_neighbors": related_from_clusters,
-                "markov_roadmap": next_step_courses
+                "markov_roadmap": next_step_courses,
+                "user_profile": public_user_profile,
             }
         }
     except Exception as e:
@@ -282,9 +376,11 @@ def get_courses_catalog(
         size: int = Query(12, ge=1, le=50, description="Количество курсов на странице"),
         sort_by: str = Query("popular", description="Сортировка: popular, rating, new"),
         difficulty: str = Query(None, description="Фильтр по сложности: easy, normal, hard"),
-        search: str = Query(None, description="Поиск по названию")
+        search: str = Query(None, description="Поиск по названию"),
+        user_id: str | None = Depends(get_optional_current_user_id),
 ):
     try:
+        liked_course_ids = load_liked_course_ids(supabase, user_id) if user_id else set()
         start = (page - 1) * size
         end = start + size - 1
 
@@ -307,20 +403,17 @@ def get_courses_catalog(
 
         response = query.range(start, end).execute()
 
-        update_date_obj = get_updating_date()
-        update_date_str = update_date_obj.strftime('%Y-%m-%d %H:%M:%S') if update_date_obj else "Неизвестно"
-
         return {
             "status": "success",
-            "update_date": update_date_str,
             "meta": {
                 "current_page": page,
                 "page_size": size,
                 "total_items": response.count,
                 "total_pages": (response.count + size - 1) // size if response.count else 0
             },
-            "courses": response.data
+            "courses": [get_public_course(course, liked_course_ids) for course in (response.data or [])]
         }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

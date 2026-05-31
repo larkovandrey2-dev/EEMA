@@ -6,19 +6,46 @@ import "./skill-form.css"
 import { ProfileParams } from "../../shared";
 import { profileApi } from "../../shared/index";
 import { useNavigate } from "react-router-dom";
-import { ProfileParseResponse } from "../../shared/api/utils/types";
+import { ProfileParseResponse, ProfileResponse } from "../../shared/api/utils/types";
 
 
 
 
 export const SkillForm: React.FC = () => {
     const [loading, setLoading] = useState(false);
-    // const [parsedDescription, setParsedDescription] = useState<ProfileParseResponse | null>(null);
+    const [profileLoading, setProfileLoading] = useState(true);
+    const [Description, setDescription] = useState<ProfileResponse | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        //сделать
-    })
+        const loadProfile = async () => {
+            try{
+                const data = await profileApi.getProfile()
+                setDescription(data)
+                const skills: Skill[] = Object.entries(data.profile.preferences.skills).map(
+                    ([name, level]) => ({
+                        name,
+                        level: level as SkillLevel
+                    })
+                );
+            
+                setProfile({
+                    skills,
+                    customDescription: ""
+                });
+            
+                setDescription(data);
+ 
+            }
+            catch (e){
+                console.error("Ошибка при загрузке профиля:", e);
+            }
+            finally {
+                setProfileLoading(false);
+            }
+        }
+        loadProfile()
+    }, [])
 
     const [profile, setProfile] = useState({
         skills: [] as Skill[],
@@ -58,10 +85,13 @@ export const SkillForm: React.FC = () => {
         profile.skills.forEach((skill) => {
           skillsMap[skill.name] = skill.level
         })
+        const parsedGoals = parsedDescription?.data.learning_goals;
 
         return {
             skills: {...parsedDescription?.data.skills, ...skillsMap},
-            learning_goals: parsedDescription?.data.learning_goals || [],
+            learning_goals: parsedGoals && parsedGoals.length > 0
+                ? parsedGoals
+                : Description?.profile.preferences.learning_goals || [],
             time_per_week: "medium"
         }
     }
@@ -87,6 +117,9 @@ export const SkillForm: React.FC = () => {
 
     const isInvalid = profile.skills.length === 0 && !profile.customDescription.trim();
 
+    if (profileLoading) {
+        return <p>Загрузка профиля...</p>;
+    }
     return (
     <div>
         <SkillGroup 

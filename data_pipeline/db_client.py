@@ -14,22 +14,25 @@ def insert_courses(courses: dict):
     for course in courses:
         try:
             current_time = datetime.now(timezone.utc).isoformat()
-            supabase.table('courses').upsert(
-                {
-                    "stepik_id": course["course_id"],
-                    "title": course["title"],
-                    "summary": course["summary"],
-                    "difficulty": course["difficulty"],
-                    "learners_count": course["learners_count"],
-                    "rating": course["rating"],
-                    "url": course["url"],
-                    "tags": course["tags"],
-                    "updated_at": current_time,
-                    "is_paid": course["is_paid"],
-                    "price": course["price"],
-                    "embedding": course["embedding"],
-                }, on_conflict='stepik_id'
-            ).execute()
+            record = {
+                "stepik_id": course["course_id"],
+                "title": course["title"],
+                "summary": course["summary"],
+                "difficulty": course["difficulty"],
+                "learners_count": course["learners_count"],
+                "rating": course["rating"],
+                "url": course["url"],
+                "tags": course["tags"],
+                "updated_at": current_time,
+                "is_paid": course["is_paid"],
+                "price": course["price"],
+                "embedding": course["embedding"],
+            }
+            for optional_field in ("raw_tags", "normalized_tags", "domain", "tag_meta"):
+                if course.get(optional_field) is not None:
+                    record[optional_field] = course[optional_field]
+
+            supabase.table('courses').upsert(record, on_conflict='stepik_id').execute()
             success_count += 1
         except Exception as e:
             print(e)
@@ -56,5 +59,3 @@ def get_updating_date():
         return datetime.fromisoformat(date[0]["updated_at"])
     except Exception as e:
         print(e)
-
-

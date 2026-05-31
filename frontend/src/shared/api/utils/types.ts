@@ -31,19 +31,31 @@ export type ProfileParams = {
   time_per_week: "low" | "medium" | "high"
 }
 
+export interface CoursePersonalization {
+  already_liked: boolean;
+  embedding_similarity: number;
+  final_score: number;
+  matched_tags: string[];
+  query_tags: string[];
+  same_cluster: boolean;
+  score: number;
+}
+
 export type Course = {
   id: number;
   title: string;
   url: string;
   stepik_id: number;
+  reason: string;
 
   difficulty: "easy" | "normal" | "hard" | null;
   is_paid: boolean;
+  is_liked: boolean;
   price: number | null;
 
   learners_count: number;
   rating: number
-  similarity: number
+  personalization: CoursePersonalization;
 
   summary: string
   tags: string[]
@@ -65,6 +77,15 @@ export type ProfileParseResponse = {
     learning_goals: string[];
   };
 };
+
+export type ProfileResponse = {
+  profile: {
+    preferences: {
+      skills: Record<string, SkillLevel>;
+      learning_goals: string[];
+    }
+  }
+}
 export type ProfileParseParams = {
   text: string
 }
@@ -79,6 +100,7 @@ export interface AdvancedRecommendationsResponse {
 export type Markov = {
   difficulty: "easy" | "normal" | "hard";
   id: number;
+  is_liked: boolean;
   learners_count: number;
   markov_reason: string;
   tags: string[];
@@ -100,6 +122,7 @@ export interface Cluster {
   embedding: number[];
   id: number;
   is_paid: boolean;
+  is_liked: boolean;
   learners_count: number;
   price: number | null;
   rating: number;

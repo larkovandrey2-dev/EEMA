@@ -3,6 +3,10 @@ import time
 from dotenv import load_dotenv
 from supabase import create_client, Client
 import requests
+try:
+    from data_pipeline.tag_normalizer import normalize_tags
+except ImportError:  # pragma: no cover
+    from tag_normalizer import normalize_tags
 
 load_dotenv()
 
@@ -47,7 +51,7 @@ def ask_yagpt(system_prompt: str, user_text: str, temperature: float = 0.0) -> s
 def run_enrichment():
     print("Начинаем обогащение базы умными тегами...")
 
-    response = supabase.table("courses").select("id, title, summary, tags").order("learners_count", desc=True).limit(
+    response = supabase.table("courses").select("id, title, summary, tags, tag_meta").order("learners_count", desc=True).limit(
         1000).execute()
     courses = response.data
 
@@ -70,15 +74,23 @@ def run_enrichment():
         try:
             raw_tags = ask_yagpt(system_prompt, user_text)
 
-            new_tags = [tag.strip() for tag in raw_tags.split(",") if tag.strip()]
+            llm_candidate_tags = [tag.strip() for tag in raw_tags.split(",") if tag.strip()]
 
-            if new_tags:
+            if llm_candidate_tags:
                 old_tags = course.get('tags') or []
-                combined_tags = list(set(old_tags + new_tags))
+                normalized = normalize_tags(old_tags + llm_candidate_tags)
+                tag_meta = course.get("tag_meta") or {}
+                tag_meta.update(normalized.to_meta())
+                tag_meta["llm_candidate_tags"] = llm_candidate_tags
 
-                supabase.table("courses").update({"tags": combined_tags}).eq("id", course['id']).execute()
+                supabase.table("courses").update({
+                    "normalized_tags": normalized.normalized_tags,
+                    "tags": normalized.normalized_tags,
+                    "domain": normalized.domain,
+                    "tag_meta": tag_meta,
+                }).eq("id", course['id']).execute()
 
-                print(f"✅ [{course['id']}] {course['title'][:30]}... -> {new_tags}")
+                print(f"✅ [{course['id']}] {course['title'][:30]}... -> {normalized.normalized_tags}")
                 updated_count += 1
 
         except Exception as e:

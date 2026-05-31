@@ -1,38 +1,40 @@
-import json
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
+try:
+    from data_pipeline.tag_normalizer import normalize_tags
+except ImportError:  # pragma: no cover
+    from tag_normalizer import normalize_tags
 
 load_dotenv()
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 
 
 def apply_mapping_to_db():
-    print("Начинаем очистку базы по маппингу")
-    with open("tags_mapping.json", "r", encoding="utf-8") as f:
-        mapping = json.load(f)
-    response = supabase.table("courses").select("id, tags").execute()
+    print("Начинаем очистку базы по детерминированной таксономии")
+    response = supabase.table("courses").select("id, tags, raw_tags, tag_meta").execute()
     courses = response.data
 
     updated_count = 0
     for course in courses:
-        old_tags = course.get("tags")
-        if not old_tags:
+        source_tags = course.get("raw_tags") or course.get("tags")
+        if not source_tags:
             continue
 
-        new_tags = []
-        for tag in old_tags:
-            mapped_tag = mapping.get(tag, tag)
-
-            if mapped_tag is not None:
-                new_tags.append(mapped_tag)
-        new_tags = list(set(new_tags))
-
-        if sorted(old_tags) != sorted(new_tags):
-            supabase.table("courses").update({"tags": new_tags}).eq("id", course["id"]).execute()
+        normalized = normalize_tags(source_tags)
+        tag_meta = course.get("tag_meta") or {}
+        tag_meta.update(normalized.to_meta())
+        if sorted(course.get("tags") or []) != sorted(normalized.normalized_tags):
+            supabase.table("courses").update({
+                "raw_tags": normalized.raw_tags,
+                "normalized_tags": normalized.normalized_tags,
+                "tags": normalized.normalized_tags,
+                "domain": normalized.domain,
+                "tag_meta": tag_meta,
+            }).eq("id", course["id"]).execute()
             updated_count += 1
 
-    print(f"Успешно обновлены теги у {updated_count} курсов.")
+    print(f"Успешно нормализованы теги у {updated_count} курсов.")
 
 
 if __name__ == "__main__":

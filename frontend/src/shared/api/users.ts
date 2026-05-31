@@ -8,6 +8,12 @@ class Profile{
         return data
     }
 
+    getProfile = async () => {
+        const res = await $api.get("/api/users/profile")
+        const data = res.data
+        return data
+    }
+
     parseSkills = async (description: string) => {
         const res = await $api.post("/api/users/parse-skills", { text: description || "nothing" } as ProfileParseParams)
         const data: ProfileParseResponse = res.data
@@ -22,6 +28,17 @@ class Profile{
 
     getAdvancedRecommendations = async (query: string, limit: number = 5) => {
         const res = await $api.post("/api/courses/recommend/advanced", { "query": query, "limit": limit })
+        const data = res.data
+        return data
+    }
+
+    likeCourse = async (course_id: number) => {
+        const res = await $api.post(`/api/courses/${course_id}/like`)
+        const data = res.data
+        return data
+    }
+    unlikeCourse = async (course_id: number) => {
+        const res = await $api.delete(`/api/courses/${course_id}/like`)
         const data = res.data
         return data
     }

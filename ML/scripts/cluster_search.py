@@ -1,4 +1,6 @@
 from sklearn.metrics.pairwise import cosine_distances
+import numpy as np
+import pandas as pd
 
 def get_fitting_courses(course, df_courses, amount=3):
   cluster: pd.DataFrame = df_courses[df_courses["cluster"] == course['cluster']]
