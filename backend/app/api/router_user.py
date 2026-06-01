@@ -1,15 +1,15 @@
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 import jwt
 from fastapi import APIRouter, Depends, HTTPException
+from app.core.config import get_env, is_test_token_endpoint_enabled
 from app.core.database import supabase
 from app.schemas.models import UserPreferences, TextInput
 from app.core.security import get_current_user_id
 from app.api.router_courses import get_public_course
 from services.llm_request import ask_yagpt
 from services.personalization import load_liked_courses
-import os
 
 router = APIRouter(prefix="/api/users", tags=["Users"])
 
@@ -108,13 +108,16 @@ def get_profile(user_id: str = Depends(get_current_user_id)):
 
 @router.get("/generate-test-token")
 def generate_test_token():
-    secret = os.getenv("JWT_SECRET")
+    if not is_test_token_endpoint_enabled():
+        raise HTTPException(status_code=404, detail="Not found")
+
+    secret = get_env("JWT_SECRET")
     fake_user_id = str(uuid.uuid4())
     payload = {
         "sub": fake_user_id,
         "aud": "authenticated",
         "role": "authenticated",
-        "exp": datetime.utcnow() + timedelta(hours=1)
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1)
     }
     token = jwt.encode(payload, secret, algorithm="HS256")
 

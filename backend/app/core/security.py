@@ -1,11 +1,10 @@
-import os
 import jwt
 from fastapi import HTTPException, Depends
-from dotenv import load_dotenv
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-load_dotenv()
-SUPABASE_JWT = os.getenv("JWT_SECRET")
+from app.core.config import get_env
+
+SUPABASE_JWT = get_env("JWT_SECRET")
 security = HTTPBearer()
 optional_security = HTTPBearer(auto_error=False)
 
