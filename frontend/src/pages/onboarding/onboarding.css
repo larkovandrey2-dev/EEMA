@@ -1,6 +1,6 @@
 .onboarding-page {
-  background-color: light-dark(#f8fafc, #0f172a);
-  color: light-dark(#0f172a, #ffffff);
+  background-color: var(--app-bg);
+  color: var(--app-text);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -23,15 +23,22 @@
 }
 
 .brand-title {
+  display: inline-block;
   font-size: clamp(3rem, 12vw, 4.5rem);
   font-weight: 900;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
   line-height: 1.1;
-  width: 200px;
+  max-width: 100%;
+  padding-inline: 0.04em;
+  white-space: nowrap;
   text-align: center;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
-  background: linear-gradient(to right, #7c3aed, #6366f1);
+  background: linear-gradient(
+    to right,
+    light-dark(var(--app-midnight), var(--app-primary)),
+    light-dark(var(--app-primary), #ccfbf1)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -41,7 +48,7 @@
   font-weight: 700;
   margin-bottom: 2rem;
   text-align: center;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .legend {
@@ -53,7 +60,7 @@
 }
 
 .legend-text {
-  color: light-dark(#64748b, #94a3b8);
+  color: var(--app-text-soft);
   font-size: 1.125rem;
   text-align: center;
 }
@@ -63,7 +70,7 @@
   gap: 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: light-dark(#64748b, #94a3b8);
+  color: var(--app-text-soft);
 }
 
 .legend-item {
@@ -84,4 +91,4 @@
 
 .dot-low { background-color: #ef4444; }
 .dot-mid { background-color: #f97316; }
-.dot-high { background-color: #22c55e; }
+.dot-high { background-color: var(--app-accent); }

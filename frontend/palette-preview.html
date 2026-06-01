@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EEMA Onboarding Palette Preview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        color-scheme: light;
+      }
+
+      body {
+        margin: 0;
+        background: #f4f6f8;
+        color: #172033;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      .page {
+        width: min(1320px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 56px;
+      }
+
+      .intro {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 26px;
+      }
+
+      .intro h1 {
+        margin: 0 0 8px;
+        color: #172033;
+        font-size: 3rem;
+        line-height: 1;
+      }
+
+      .intro p {
+        max-width: 760px;
+        margin: 0;
+        color: #5b6878;
+        line-height: 1.55;
+      }
+
+      .intro-badges {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .intro-badges span {
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid #dfe6ee;
+        color: #5b6878;
+        font-size: 0.8rem;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .palette-list {
+        display: grid;
+        gap: 24px;
+      }
+
+      .palette-section {
+        --bg: var(--light-bg);
+        --surface: var(--light-surface);
+        --surface-2: var(--light-surface-2);
+        --chip: var(--light-chip);
+        --text: var(--light-text);
+        --muted: var(--light-muted);
+        --border: var(--light-border);
+        --accent: var(--light-accent);
+        --accent-2: var(--light-accent-2);
+        --accent-text: var(--light-accent-text);
+        --soft-accent: var(--light-soft-accent);
+        --shadow: var(--light-shadow);
+        --brand-start: var(--light-brand-start);
+        --brand-end: var(--light-brand-end);
+
+        display: grid;
+        grid-template-columns: minmax(250px, 0.4fr) minmax(0, 1.6fr);
+        gap: 18px;
+        padding: 18px;
+        border: 1px solid #dfe6ee;
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 18px 44px rgba(23, 32, 51, 0.08);
+      }
+
+      .palette-meta {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 22px;
+        padding: 8px;
+      }
+
+      .palette-kicker {
+        margin-bottom: 8px;
+        color: var(--light-accent);
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .palette-meta h2 {
+        margin: 0 0 10px;
+        color: #172033;
+        font-size: 1.45rem;
+        line-height: 1.12;
+      }
+
+      .palette-meta p {
+        margin: 0;
+        color: #5b6878;
+        line-height: 1.55;
+      }
+
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        overflow: hidden;
+        border: 1px solid #dfe6ee;
+        border-radius: 14px;
+      }
+
+      .swatch {
+        min-height: 54px;
+      }
+
+      .screen-pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      .screen-shell {
+        min-width: 0;
+      }
+
+      .screen-caption {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: #6b7789;
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .screen-caption code {
+        color: #8794a8;
+        font-family: inherit;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: none;
+      }
+
+      .screen {
+        min-height: 456px;
+        overflow: hidden;
+        padding: 18px 20px 20px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background:
+          radial-gradient(circle at 52% 28%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 36%),
+          var(--bg);
+        color: var(--text);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      }
+
+      .screen.dark {
+        --bg: var(--dark-bg);
+        --surface: var(--dark-surface);
+        --surface-2: var(--dark-surface-2);
+        --chip: var(--dark-chip);
+        --text: var(--dark-text);
+        --muted: var(--dark-muted);
+        --border: var(--dark-border);
+        --accent: var(--dark-accent);
+        --accent-2: var(--dark-accent-2);
+        --accent-text: var(--dark-accent-text);
+        --soft-accent: var(--dark-soft-accent);
+        --shadow: var(--dark-shadow);
+        --brand-start: var(--dark-brand-start);
+        --brand-end: var(--dark-brand-end);
+      }
+
+      .screen-inner {
+        width: min(100%, 720px);
+        margin: 0 auto;
+      }
+
+      .screen-top {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 18px;
+      }
+
+      .theme-icon {
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--surface) 76%, transparent);
+        color: var(--muted);
+        font-size: 1rem;
+        font-weight: 900;
+      }
+
+      .brand {
+        margin: 0 auto 4px;
+        width: max-content;
+        max-width: 100%;
+        padding-inline: 0.04em;
+        background: linear-gradient(90deg, var(--brand-start), var(--brand-end));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-size: 3.15rem;
+        font-weight: 900;
+        line-height: 1.05;
+        white-space: nowrap;
+      }
+
+      .subtitle {
+        margin: 0 0 18px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 0.86rem;
+        font-weight: 800;
+      }
+
+      .lead {
+        margin: 0 0 12px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 0.96rem;
+        font-weight: 600;
+      }
+
+      .level-legend {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 13px;
+        margin-bottom: 26px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+      }
+
+      .legend-dot,
+      .dot {
+        width: 8px;
+        height: 8px;
+        display: inline-block;
+        border-radius: 999px;
+      }
+
+      .dot-low {
+        background: #ef4444;
+      }
+
+      .dot-mid {
+        background: #f97316;
+      }
+
+      .dot-high {
+        background: var(--accent);
+      }
+
+      .skills-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 12px;
+        margin: 0 auto 30px;
+      }
+
+      .skill-pill {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 14px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--chip);
+        color: var(--muted);
+        box-shadow: 0 6px 18px var(--shadow);
+        font-size: 0.78rem;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .skill-pill.primary {
+        border-color: color-mix(in srgb, var(--accent) 58%, var(--border));
+        background: var(--soft-accent);
+        color: var(--accent);
+        box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 22%, transparent);
+      }
+
+      .skill-pill.warning {
+        border-color: color-mix(in srgb, #ef4444 45%, var(--border));
+        background: color-mix(in srgb, #ef4444 14%, var(--chip));
+        color: color-mix(in srgb, #ef4444 78%, var(--text));
+      }
+
+      .skill-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--surface) 76%, transparent);
+      }
+
+      .level-dots {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .dot.inactive {
+        opacity: 0.35;
+      }
+
+      .dot.active {
+        transform: scale(1.2);
+        box-shadow: 0 0 10px currentColor;
+      }
+
+      .separator {
+        width: 1px;
+        height: 12px;
+        background: var(--border);
+      }
+
+      .x {
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1;
+      }
+
+      .description {
+        width: min(100%, 570px);
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .description h3 {
+        margin: 0 0 14px;
+        color: var(--text);
+        font-size: 1.05rem;
+        line-height: 1.2;
+      }
+
+      .textarea {
+        min-height: 118px;
+        padding: 18px 20px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--surface);
+        color: var(--muted);
+        text-align: left;
+        font-size: 0.9rem;
+        line-height: 1.45;
+        box-shadow: 0 10px 28px var(--shadow);
+      }
+
+      .start-row {
+        display: flex;
+        justify-content: center;
+        margin-top: 16px;
+      }
+
+      .start-button {
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 28px;
+        border-radius: 14px;
+        background: var(--accent-2);
+        color: var(--accent-text);
+        font-size: 0.9rem;
+        font-weight: 900;
+        box-shadow: 0 12px 22px color-mix(in srgb, var(--accent-2) 24%, transparent);
+      }
+
+      .arctic {
+        --light-bg: #f7fafc;
+        --light-surface: #ffffff;
+        --light-surface-2: #edf4f7;
+        --light-chip: #ffffff;
+        --light-text: #1a1a2e;
+        --light-muted: #5c697a;
+        --light-border: #dbe7ed;
+        --light-accent: #2ec4b6;
+        --light-accent-2: #1a1a2e;
+        --light-accent-text: #ffffff;
+        --light-soft-accent: #e7fbf8;
+        --light-shadow: rgba(23, 32, 51, 0.1);
+        --light-brand-start: #1a1a2e;
+        --light-brand-end: #2ec4b6;
+        --dark-bg: #111827;
+        --dark-surface: #1a2234;
+        --dark-surface-2: #233147;
+        --dark-chip: #1f293d;
+        --dark-text: #f8fafc;
+        --dark-muted: #aab6c5;
+        --dark-border: #2c3b52;
+        --dark-accent: #2ec4b6;
+        --dark-accent-2: #2ec4b6;
+        --dark-accent-text: #10202f;
+        --dark-soft-accent: rgba(46, 196, 182, 0.13);
+        --dark-shadow: rgba(0, 0, 0, 0.32);
+        --dark-brand-start: #51e0d5;
+        --dark-brand-end: #f4fffd;
+      }
+
+      .signal {
+        --light-bg: #f5f7fa;
+        --light-surface: #ffffff;
+        --light-surface-2: #edf2f7;
+        --light-chip: #ffffff;
+        --light-text: #172033;
+        --light-muted: #637083;
+        --light-border: #dde5ee;
+        --light-accent: #00a6a6;
+        --light-accent-2: #ffb703;
+        --light-accent-text: #172033;
+        --light-soft-accent: #e2fbf8;
+        --light-shadow: rgba(23, 32, 51, 0.1);
+        --light-brand-start: #172033;
+        --light-brand-end: #00a6a6;
+        --dark-bg: #121826;
+        --dark-surface: #1c2636;
+        --dark-surface-2: #243145;
+        --dark-chip: #202b3d;
+        --dark-text: #f8fafc;
+        --dark-muted: #a9b5c6;
+        --dark-border: #334258;
+        --dark-accent: #37d4ca;
+        --dark-accent-2: #ffb703;
+        --dark-accent-text: #172033;
+        --dark-soft-accent: rgba(55, 212, 202, 0.13);
+        --dark-shadow: rgba(0, 0, 0, 0.34);
+        --dark-brand-start: #37d4ca;
+        --dark-brand-end: #ffed9a;
+      }
+
+      .coral {
+        --light-bg: #f7f3ef;
+        --light-surface: #fffaf6;
+        --light-surface-2: #f0e8df;
+        --light-chip: #fffaf6;
+        --light-text: #202124;
+        --light-muted: #71675f;
+        --light-border: #e4d8cf;
+        --light-accent: #ff6b4a;
+        --light-accent-2: #2ec4b6;
+        --light-accent-text: #101515;
+        --light-soft-accent: #fff0eb;
+        --light-shadow: rgba(62, 47, 35, 0.11);
+        --light-brand-start: #202124;
+        --light-brand-end: #ff6b4a;
+        --dark-bg: #191817;
+        --dark-surface: #252321;
+        --dark-surface-2: #302c29;
+        --dark-chip: #292724;
+        --dark-text: #fbf7f1;
+        --dark-muted: #c2b6aa;
+        --dark-border: #3b3632;
+        --dark-accent: #ff7c5f;
+        --dark-accent-2: #2ec4b6;
+        --dark-accent-text: #101515;
+        --dark-soft-accent: rgba(255, 124, 95, 0.14);
+        --dark-shadow: rgba(0, 0, 0, 0.34);
+        --dark-brand-start: #ff8f75;
+        --dark-brand-end: #fff0e6;
+      }
+
+      .cobalt {
+        --light-bg: #f7faff;
+        --light-surface: #ffffff;
+        --light-surface-2: #edf4ff;
+        --light-chip: #ffffff;
+        --light-text: #102a43;
+        --light-muted: #5e7187;
+        --light-border: #d9e6f8;
+        --light-accent: #2563eb;
+        --light-accent-2: #2ec4b6;
+        --light-accent-text: #ffffff;
+        --light-soft-accent: #eaf2ff;
+        --light-shadow: rgba(37, 99, 235, 0.1);
+        --light-brand-start: #102a43;
+        --light-brand-end: #2563eb;
+        --dark-bg: #101624;
+        --dark-surface: #192236;
+        --dark-surface-2: #22304a;
+        --dark-chip: #1e2a41;
+        --dark-text: #f8fbff;
+        --dark-muted: #a8b9d0;
+        --dark-border: #2f405c;
+        --dark-accent: #60a5fa;
+        --dark-accent-2: #2ec4b6;
+        --dark-accent-text: #07111f;
+        --dark-soft-accent: rgba(96, 165, 250, 0.13);
+        --dark-shadow: rgba(0, 0, 0, 0.34);
+        --dark-brand-start: #60a5fa;
+        --dark-brand-end: #ccfbf1;
+      }
+
+      .lime {
+        --light-bg: #f8fafc;
+        --light-surface: #ffffff;
+        --light-surface-2: #eef2f7;
+        --light-chip: #ffffff;
+        --light-text: #101828;
+        --light-muted: #64748b;
+        --light-border: #dde5ee;
+        --light-accent: #65a30d;
+        --light-accent-2: #101828;
+        --light-accent-text: #ffffff;
+        --light-soft-accent: #eefbd3;
+        --light-shadow: rgba(16, 24, 40, 0.1);
+        --light-brand-start: #101828;
+        --light-brand-end: #65a30d;
+        --dark-bg: #101828;
+        --dark-surface: #182233;
+        --dark-surface-2: #223047;
+        --dark-chip: #1b2638;
+        --dark-text: #f9fafb;
+        --dark-muted: #a8b4c4;
+        --dark-border: #334155;
+        --dark-accent: #a3e635;
+        --dark-accent-2: #a3e635;
+        --dark-accent-text: #101828;
+        --dark-soft-accent: rgba(163, 230, 53, 0.14);
+        --dark-shadow: rgba(0, 0, 0, 0.34);
+        --dark-brand-start: #a3e635;
+        --dark-brand-end: #ccfbf1;
+      }
+
+      @media (max-width: 1080px) {
+        .palette-section {
+          grid-template-columns: 1fr;
+        }
+
+        .screen {
+          min-height: 430px;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .intro {
+          display: grid;
+          align-items: start;
+        }
+
+        .intro h1 {
+          font-size: 2.25rem;
+        }
+
+        .intro-badges {
+          justify-content: flex-start;
+        }
+
+        .screen-pair {
+          grid-template-columns: 1fr;
+        }
+
+        .screen {
+          min-height: auto;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .page {
+          width: min(100% - 20px, 1320px);
+          padding-top: 18px;
+        }
+
+        .palette-section,
+        .screen {
+          padding: 12px;
+          border-radius: 16px;
+        }
+
+        .brand {
+          font-size: 2.5rem;
+        }
+
+        .skills-grid {
+          gap: 8px;
+        }
+
+        .skill-pill {
+          min-height: 34px;
+          padding: 8px 11px;
+          font-size: 0.74rem;
+        }
+
+        .description h3 {
+          font-size: 0.95rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="intro">
+        <div>
+          <h1>EEMA onboarding palettes</h1>
+          <p>Пять вариантов применены именно к экрану выбора навыков: логотип, легенда уровней, чипы, выбранный FastAPI, textarea и кнопка старта. В каждой карточке есть light и dark, чтобы сразу видно было, где палитра держится лучше.</p>
+        </div>
+        <div class="intro-badges">
+          <span>тот же экран</span>
+          <span>5 палитр</span>
+          <span>light + dark</span>
+        </div>
+      </section>
+
+      <section class="palette-list">
+        <article class="palette-section arctic">
+          <div class="palette-meta">
+            <div>
+              <div class="palette-kicker">мой фаворит</div>
+              <h2>Arctic Tech</h2>
+              <p>Нейтральный светлый фон, спокойный midnight-текст и turquoise только в акцентах. Самый безопасный и чистый вариант для EEMA.</p>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#f7fafc"></div>
+              <div class="swatch" style="background:#ffffff"></div>
+              <div class="swatch" style="background:#1a1a2e"></div>
+              <div class="swatch" style="background:#2ec4b6"></div>
+              <div class="swatch" style="background:#111827"></div>
+            </div>
+          </div>
+          <div class="screen-pair">
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Light</span><code>#f7fafc / #2ec4b6</code></div>
+              <div class="screen" data-screen></div>
+            </div>
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Dark</span><code>#111827 / #2ec4b6</code></div>
+              <div class="screen dark" data-screen></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="palette-section signal">
+          <div class="palette-meta">
+            <div>
+              <div class="palette-kicker">бодрее</div>
+              <h2>Ink + Signal</h2>
+              <p>Сдержанная база плюс teal и желтый signal для основных действий. Выглядит энергичнее, но фон не становится зеленым.</p>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#f5f7fa"></div>
+              <div class="swatch" style="background:#ffffff"></div>
+              <div class="swatch" style="background:#172033"></div>
+              <div class="swatch" style="background:#00a6a6"></div>
+              <div class="swatch" style="background:#ffb703"></div>
+            </div>
+          </div>
+          <div class="screen-pair">
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Light</span><code>#f5f7fa / #00a6a6</code></div>
+              <div class="screen" data-screen></div>
+            </div>
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Dark</span><code>#121826 / #ffb703</code></div>
+              <div class="screen dark" data-screen></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="palette-section coral">
+          <div class="palette-meta">
+            <div>
+              <div class="palette-kicker">теплее</div>
+              <h2>Graphite + Coral</h2>
+              <p>Более дружелюбный вариант: graphite держит интерфейс серьезным, coral делает экран теплее, turquoise остается вторым акцентом.</p>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#f7f3ef"></div>
+              <div class="swatch" style="background:#fffaf6"></div>
+              <div class="swatch" style="background:#202124"></div>
+              <div class="swatch" style="background:#ff6b4a"></div>
+              <div class="swatch" style="background:#2ec4b6"></div>
+            </div>
+          </div>
+          <div class="screen-pair">
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Light</span><code>#f7f3ef / #ff6b4a</code></div>
+              <div class="screen" data-screen></div>
+            </div>
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Dark</span><code>#191817 / #ff7c5f</code></div>
+              <div class="screen dark" data-screen></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="palette-section cobalt">
+          <div class="palette-meta">
+            <div>
+              <div class="palette-kicker">классический tech</div>
+              <h2>Cobalt Learning</h2>
+              <p>Более строгий вариант: синий дает ощущение надежности, turquoise освежает выбранные состояния и кнопку.</p>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#f7faff"></div>
+              <div class="swatch" style="background:#ffffff"></div>
+              <div class="swatch" style="background:#102a43"></div>
+              <div class="swatch" style="background:#2563eb"></div>
+              <div class="swatch" style="background:#2ec4b6"></div>
+            </div>
+          </div>
+          <div class="screen-pair">
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Light</span><code>#f7faff / #2563eb</code></div>
+              <div class="screen" data-screen></div>
+            </div>
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Dark</span><code>#101624 / #60a5fa</code></div>
+              <div class="screen dark" data-screen></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="palette-section lime">
+          <div class="palette-meta">
+            <div>
+              <div class="palette-kicker">смело</div>
+              <h2>Deep Navy + Lime</h2>
+              <p>Самый контрастный и заметный вариант. В dark mode выглядит современно, но lime лучше держать как точечный акцент.</p>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#f8fafc"></div>
+              <div class="swatch" style="background:#101828"></div>
+              <div class="swatch" style="background:#182233"></div>
+              <div class="swatch" style="background:#a3e635"></div>
+              <div class="swatch" style="background:#2ec4b6"></div>
+            </div>
+          </div>
+          <div class="screen-pair">
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Light</span><code>#f8fafc / #65a30d</code></div>
+              <div class="screen" data-screen></div>
+            </div>
+            <div class="screen-shell">
+              <div class="screen-caption"><span>Dark</span><code>#101828 / #a3e635</code></div>
+              <div class="screen dark" data-screen></div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <template id="screen-template">
+      <div class="screen-inner">
+        <div class="screen-top">
+          <div class="theme-icon">◐</div>
+        </div>
+        <h2 class="brand">EEMA</h2>
+        <p class="subtitle">Что умеешь?</p>
+        <p class="lead">Выбери технологии и укажи свой уровень</p>
+        <div class="level-legend">
+          <span class="legend-item"><span class="legend-dot dot-low"></span>Начальный</span>
+          <span class="legend-item"><span class="legend-dot dot-mid"></span>Средний</span>
+          <span class="legend-item"><span class="legend-dot dot-high"></span>Продвинутый</span>
+        </div>
+        <div class="skills-grid">
+          <span class="skill-pill">Python</span>
+          <span class="skill-pill">JavaScript</span>
+          <span class="skill-pill primary">React</span>
+          <span class="skill-pill warning">
+            FastAPI
+            <span class="skill-controls">
+              <span class="level-dots">
+                <span class="dot dot-low active"></span>
+                <span class="dot dot-mid inactive"></span>
+                <span class="dot dot-high inactive"></span>
+              </span>
+              <span class="separator"></span>
+              <span class="x">×</span>
+            </span>
+          </span>
+          <span class="skill-pill">SQL</span>
+          <span class="skill-pill">PyTorch</span>
+          <span class="skill-pill">Figma</span>
+          <span class="skill-pill">Docker</span>
+          <span class="skill-pill">Kubernetes</span>
+          <span class="skill-pill">TypeScript</span>
+          <span class="skill-pill">HTML</span>
+          <span class="skill-pill">CSS</span>
+          <span class="skill-pill">Tailwind CSS</span>
+          <span class="skill-pill">Node.js</span>
+          <span class="skill-pill">Django</span>
+          <span class="skill-pill">C++</span>
+          <span class="skill-pill">Java</span>
+          <span class="skill-pill">Go</span>
+          <span class="skill-pill">Rust</span>
+          <span class="skill-pill">System Design</span>
+        </div>
+        <div class="description">
+          <h3>Опиши навыки своими словами</h3>
+          <div class="textarea">Например: пишу на Python около года, хочу подтянуть React и SQL...</div>
+          <div class="start-row">
+            <div class="start-button">Начать →</div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      const template = document.querySelector("#screen-template");
+
+      document.querySelectorAll("[data-screen]").forEach((screen) => {
+        screen.innerHTML = template.innerHTML;
+      });
+
+      template.remove();
+    </script>
+  </body>
+</html>

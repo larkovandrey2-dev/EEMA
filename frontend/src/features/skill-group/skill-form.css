@@ -12,7 +12,7 @@
   font-weight: 700;
   margin-bottom: 1.5rem;
   text-align: center;
-  color: light-dark(#0f172a, #ffffff);
+  color: var(--app-text);
 }
 
 .skill-textarea {
@@ -25,14 +25,14 @@
   outline: none;
   transition: all 0.2s;
   resize: none;
-  background-color: light-dark(#ffffff, #1e293b);
-  border: 1px solid light-dark(#e2e8f0, #334155);
-  color: light-dark(#1e293b, #e2e8f0);
+  background-color: var(--app-surface);
+  border: 1px solid var(--app-border);
+  color: var(--app-text);
 }
 
 .skill-textarea:focus {
-  border-color: #7c3aed80;
-  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 4px var(--app-accent-soft);
 }
 
 .form-footer {
@@ -56,15 +56,15 @@
   border-radius: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: linear-gradient(to right, #7C3AED, #6366F1);
-  color: white;
-  box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+  background: var(--app-primary);
+  color: var(--app-primary-text);
+  box-shadow: 0 10px 15px -3px var(--app-accent-shadow);
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: linear-gradient(to right, #6D28D9, #4F46E5);
+  background: var(--app-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 12px 20px -3px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 12px 20px -3px var(--app-accent-shadow);
 }
 
 .submit-btn:active:not(:disabled) {

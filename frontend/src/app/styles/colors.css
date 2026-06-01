@@ -1,5 +1,31 @@
 :root {
   --font-size: 16px;
+  --app-cobalt: #2563eb;
+  --app-cobalt-hover: light-dark(#1d4ed8, #93c5fd);
+  --app-turquoise: #2ec4b6;
+  --app-turquoise-hover: light-dark(#1aa79c, #67e8f9);
+  --app-midnight: #102a43;
+  --app-bg: light-dark(#f7faff, #101624);
+  --app-bg-soft: light-dark(#edf4ff, #111a2c);
+  --app-surface: light-dark(#ffffff, #192236);
+  --app-surface-strong: light-dark(#f0f6ff, #22304a);
+  --app-surface-muted: light-dark(#edf4ff, #172139);
+  --app-text: light-dark(#102a43, #f8fbff);
+  --app-text-soft: light-dark(#5e7187, #a8b9d0);
+  --app-border: light-dark(#d9e6f8, #2f405c);
+  --app-border-strong: light-dark(rgba(37, 99, 235, 0.35), rgba(96, 165, 250, 0.48));
+  --app-primary: light-dark(#2563eb, #60a5fa);
+  --app-primary-hover: light-dark(#1d4ed8, #93c5fd);
+  --app-primary-text: light-dark(#ffffff, #07111f);
+  --app-accent: light-dark(#2563eb, #60a5fa);
+  --app-accent-text: light-dark(#1d4ed8, #93c5fd);
+  --app-accent-soft: light-dark(rgba(37, 99, 235, 0.11), rgba(96, 165, 250, 0.16));
+  --app-accent-shadow: light-dark(rgba(37, 99, 235, 0.22), rgba(96, 165, 250, 0.28));
+  --app-shadow: light-dark(rgba(16, 42, 67, 0.09), rgba(0, 0, 0, 0.34));
+  --app-shadow-strong: light-dark(rgba(16, 42, 67, 0.15), rgba(0, 0, 0, 0.48));
+  --app-danger: light-dark(#dc2626, #f87171);
+  --app-success: #2ec4b6;
+  --app-warning: #f59e0b;
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
@@ -37,12 +63,21 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  font-family: 'Inter', sans-serif;
-  color-scheme: dark;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color-scheme: light;
   
 }
-body{
+
+* {
+  box-sizing: border-box;
+  color-scheme: inherit;
+}
+
+body {
   margin: 0;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 .dark {
   --background: oklch(0.145 0 0);
@@ -82,8 +117,7 @@ body{
 }
 html {
   font-size: var(--font-size);
-  background-color: light-dark(#f8fafc, #0f172a);
-  -webkit-tap-highlight-color: transparent;
+  background-color: var(--app-bg);
 }
 h1 {
   font-size: var(--text-2xl);
@@ -119,4 +153,10 @@ input {
   font-size: var(--text-base);
   font-weight: var(--font-weight-normal);
   line-height: 1.5;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
 }

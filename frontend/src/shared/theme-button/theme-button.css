@@ -14,11 +14,12 @@
   border: none;
   cursor: pointer;
 
-  color: light-dark(#64748b, #94a3b8);
+  color: var(--app-text-soft);
 }
 
 .theme-button:hover {
-  background-color: light-dark(#e2e8f0, #1e293b);
+  background-color: var(--app-surface-muted);
+  color: var(--app-accent-text);
 }
 
 .theme-button:active {

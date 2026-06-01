@@ -5,16 +5,23 @@
 
   padding: 16px 18px;
   border-radius: 16px;
-
-  background-color: light-dark(#ffffff, #0f172a);
+  border: 1px solid var(--app-border);
+  background-color: var(--app-surface);
   text-decoration: none;
+  color: inherit;
 
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: background-color 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
 }
 
 .markov-card:hover {
-  background-color: light-dark(#f8fafc, #1e293b);
+  background-color: var(--app-surface-strong);
+  border-color: var(--app-border-strong);
   transform: translateY(-2px);
+}
+
+.markov-card:focus-visible {
+  outline: 3px solid var(--app-border-strong);
+  outline-offset: 3px;
 }
 
 .markov-index {
@@ -28,8 +35,8 @@
   justify-content: center;
 
   border-radius: 9999px;
-  background-color: light-dark(#3b82f6, #1e40af);
-  color: white;
+  background-color: var(--app-primary);
+  color: var(--app-primary-text);
 
   font-weight: 700;
   font-size: 0.95rem;
@@ -44,16 +51,18 @@
 .markov-title {
   font-size: 1rem;
   font-weight: 700;
-  color: light-dark(#1e293b, #f1f5f9);
+  line-height: 1.35;
+  color: var(--app-text);
 }
 
 .markov-meta {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
 
   font-size: 0.85rem;
-  color: light-dark(#64748b, #94a3b8);
+  color: var(--app-text-soft);
 }
 
 .markov-separator {
@@ -61,5 +70,17 @@
 }
 
 .markov-difficulty {
-  text-transform: capitalize;
+  font-weight: 800;
+}
+
+.markov-difficulty.easy {
+  color: var(--app-accent-text);
+}
+
+.markov-difficulty.normal {
+  color: #d97706;
+}
+
+.markov-difficulty.hard {
+  color: #ef4444;
 }

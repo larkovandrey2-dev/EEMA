@@ -1,12 +1,8 @@
-:root {
-  color-scheme: light dark;
-}
-
 .auth-wrapper {
   min-height: 100dvh;
   display: flex;
   justify-content: center;
-  background-color: light-dark(#f8fafc, #0f172a);
+  background-color: var(--app-bg);
 }
 
 .auth-container {
@@ -42,8 +38,8 @@
   flex-direction: column;
   gap: 16px;
 
-  background: light-dark(#ffffff, #1e293b);
-  box-shadow: 0 10px 25px light-dark(rgba(0,0,0,0.05), rgba(0,0,0,0.4));
+  background: var(--app-surface);
+  box-shadow: 0 10px 25px var(--app-shadow);
 
   box-sizing: border-box;
 }
@@ -53,7 +49,7 @@
   font-weight: 600;
   text-align: center;
 
-  color: light-dark(#1f2937, #e5e7eb);
+  color: var(--app-text);
 }
 
 .auth-input {
@@ -63,24 +59,21 @@
 
   outline: none;
 
-  color: light-dark(#111827, #e5e7eb);
-  background: light-dark(#ffffff, #0f172a);
+  color: var(--app-text);
+  background: var(--app-surface-muted);
 
-  border: 1px solid light-dark(#e5e7eb, #334155);
+  border: 1px solid var(--app-border);
 
   transition: 0.2s ease;
 }
 
 .auth-input::placeholder {
-  color: light-dark(#9ca3af, #64748b);
+  color: var(--app-text-soft);
 }
 
 .auth-input:focus {
-  border-color: light-dark(#8b5cf6, #a78bfa);
-  box-shadow: 0 0 0 3px light-dark(
-    rgba(139, 92, 246, 0.15),
-    rgba(167, 139, 250, 0.2)
-  );
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 3px var(--app-accent-soft);
 }
 
 .auth-button {
@@ -92,18 +85,15 @@
   cursor: pointer;
   font-size: 15px;
   font-weight: 500;
-  color: white;
+  color: var(--app-primary-text);
 
-  background: linear-gradient(
-    90deg,
-    light-dark(#8b5cf6, #a78bfa),
-    light-dark(#6366f1, #818cf8)
-  );
+  background: var(--app-primary);
 
   transition: opacity 0.2s ease, transform 0.1s ease;
 }
 .auth-button:hover {
   opacity: 0.9;
+  background: var(--app-primary-hover);
 }
 
 .auth-button:active {
@@ -128,13 +118,13 @@
   font-size: 14px;
   text-align: center;
 
-  color: light-dark(#6b7280, #94a3b8);
+  color: var(--app-text-soft);
 
   transition: 0.2s ease;
 }
 
 .auth-switch:hover {
-  color: light-dark(#8b5cf6, #a78bfa);
+  color: var(--app-accent-text);
 }
 
 .auth-switch:active {
