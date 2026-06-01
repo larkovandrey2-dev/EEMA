@@ -1,5 +1,4 @@
 import React from 'react';
-import { Onboarding } from '../pages';
 import "./styles/colors.css"
 import { RouterComponent } from './router';
 

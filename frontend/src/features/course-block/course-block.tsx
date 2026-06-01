@@ -1,5 +1,5 @@
 import { profileApi } from "../../shared"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { CourseGroup } from "./ui/course-group"
 import { CourseUnit } from "../../shared";
 import { AdvancedRecommendationsResponse } from "../../shared/api/utils/types";

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { $api } from '../../shared/api/utils/axios';
 import './catalog.css';
 
 interface Course {
@@ -55,7 +55,7 @@ export const CatalogPage = () => {
                 params.append('difficulty', diffMap[selectedDiffs[selectedDiffs.length - 1]]);
             }
 
-            const response = await axios.get(`http://127.0.0.1:8000/api/courses/catalog?${params.toString()}`);
+            const response = await $api.get(`/api/courses/catalog?${params.toString()}`);
             setCourses(response.data.courses || []);
             setLastUpdate(response.data.update_date || "Неизвестно");
             setMeta({
