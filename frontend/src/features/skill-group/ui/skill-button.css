@@ -5,7 +5,7 @@
   padding: 0.5rem 1rem;
   border-radius: 1.25rem;
   border: 2px solid transparent;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px -1px var(--app-shadow);
   animation: figma-pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -13,7 +13,7 @@
 .skill-name {
   font-size: 0.875rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .skill-controls {
@@ -22,8 +22,8 @@
   gap: 0.5rem;
   padding: 0.25rem 0.6rem;
   border-radius: 9999px;
-  background-color: light-dark(rgba(255, 255, 255, 0.8), rgba(15, 23, 42, 0.7));
-  border: 1px solid light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.1));
+  background-color: color-mix(in srgb, var(--app-surface) 80%, transparent);
+  border: 1px solid var(--app-border);
   backdrop-filter: blur(4px);
 }
 
@@ -59,12 +59,12 @@
 
 .dot-beginner { background-color: #ef4444; color: rgba(239, 68, 68, 0.4); }
 .dot-intermediate { background-color: #f97316; color: rgba(249, 115, 22, 0.4); }
-.dot-advanced { background-color: #22c55e; color: rgba(34, 197, 94, 0.4); }
+.dot-advanced { background-color: var(--app-accent); color: var(--app-accent-shadow); }
 
 .separator {
   width: 1px;
   height: 1.1rem;
-  background-color: light-dark(#e2e8f0, #334155);
+  background-color: var(--app-border);
 }
 
 .remove-btn {
@@ -74,7 +74,7 @@
   background: none;
   border: none;
   padding: 0.1rem;
-  color: #94a3b8;
+  color: var(--app-text-soft);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -97,9 +97,9 @@
 }
 
 .level-advanced {
-  background-color: light-dark(#f0fdf4, rgba(20, 83, 45, 0.25));
-  border-color: light-dark(#bbf7d0, rgba(34, 197, 94, 0.2));
-  color: light-dark(#166534, #86efac);
+  background-color: var(--app-accent-soft);
+  border-color: var(--app-border-strong);
+  color: var(--app-accent-text);
 }
 
 @keyframes dot-bounce {

@@ -1,0 +1,246 @@
+.catalog-page {
+  padding-bottom: 80px;
+}
+
+.catalog-header {
+  align-items: flex-end;
+}
+
+.header-left {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.catalog-title svg {
+  color: var(--app-accent-text);
+}
+
+.back-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  color: var(--app-accent-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 800;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.back-link:hover {
+  transform: translateX(-3px);
+  color: var(--app-cobalt-hover);
+}
+
+.db-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background-color: var(--app-accent);
+  box-shadow: 0 0 8px var(--app-accent-shadow);
+}
+
+.header-stats {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--app-surface-muted);
+  color: var(--app-text-soft);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.filters-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 28px;
+  padding: 18px;
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--app-surface) 78%, transparent);
+  box-shadow: 0 14px 32px var(--app-shadow);
+}
+
+.search-box {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-accent-text);
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--app-text);
+  font-size: 1rem;
+}
+
+.search-box:focus-within {
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 4px var(--app-accent-soft);
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-label {
+  color: var(--app-text-soft);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.chips-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-soft);
+  font-size: 0.875rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.chip:hover {
+  color: var(--app-accent-text);
+  border-color: var(--app-border-strong);
+}
+
+.chip.active {
+  border-color: transparent;
+  background: var(--app-primary);
+  color: var(--app-primary-text);
+  box-shadow: 0 8px 16px var(--app-accent-shadow);
+}
+
+.check-icon {
+  flex: 0 0 auto;
+}
+
+.catalog-content {
+  min-height: 280px;
+}
+
+.loader {
+  padding: 64px 24px;
+  color: var(--app-accent-text);
+  text-align: center;
+  font-weight: 800;
+}
+
+.course-price {
+  flex: 0 0 auto;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--app-surface-muted);
+  font-size: 0.8rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.course-price.free {
+  color: var(--app-accent-text);
+}
+
+.course-price.paid {
+  color: var(--app-accent-text);
+}
+
+.catalog-card-meta {
+  padding-top: 12px;
+}
+
+.pagination {
+  margin-top: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.page-input-form {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--app-text-soft);
+  font-weight: 800;
+}
+
+.page-number-input {
+  width: 58px;
+  padding: 7px;
+  border-radius: 10px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: inherit;
+  text-align: center;
+  font-weight: 900;
+  outline: none;
+}
+
+.page-number-input:focus {
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 3px var(--app-accent-soft);
+}
+
+.page-number-input::-webkit-outer-spin-button,
+.page-number-input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+@media (max-width: 760px) {
+  .catalog-header {
+    align-items: flex-start;
+  }
+
+  .filter-row {
+    gap: 18px;
+  }
+}

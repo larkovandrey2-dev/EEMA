@@ -31,14 +31,36 @@ export type ProfileParams = {
   time_per_week: "low" | "medium" | "high"
 }
 
+export interface CoursePersonalization {
+  already_liked: boolean;
+  embedding_similarity: number;
+  final_score: number;
+  matched_tags: string[];
+  query_tags: string[];
+  same_cluster: boolean;
+  score: number;
+}
+
 export type Course = {
   id: number;
   title: string;
   url: string;
+  stepik_id: number;
+  reason: string;
+
   difficulty: "easy" | "normal" | "hard" | null;
   is_paid: boolean;
+  is_liked: boolean;
   price: number | null;
+
   learners_count: number;
+  rating: number
+  personalization: CoursePersonalization;
+
+  summary: string
+  tags: string[]
+
+  updated_at: string
 };
 
 export type BaselineResponse = {
@@ -55,6 +77,60 @@ export type ProfileParseResponse = {
     learning_goals: string[];
   };
 };
+
+export type ProfileResponse = {
+  profile: {
+    preferences: {
+      skills: Record<string, SkillLevel>;
+      learning_goals: string[];
+    }
+  }
+}
 export type ProfileParseParams = {
   text: string
+}
+
+export interface AdvancedRecommendationsResponse {
+  strategy: string
+  search_query: string
+  main_results: Course[]
+  ml_enrichment: MlEnrichment
+}
+
+export type Markov = {
+  difficulty: "easy" | "normal" | "hard";
+  id: number;
+  is_liked: boolean;
+  learners_count: number;
+  markov_reason: string;
+  tags: string[];
+  title: string;
+  url: string;
+};
+
+export interface MlEnrichment {
+  anchor_course_title: string
+  cluster_neighbors: Cluster[]
+  markov_roadmap: Markov[]
+}
+
+export interface Cluster {
+  cluster_id: number;
+  cluster_reason: string;
+  created_at: string;
+  difficulty: "easy" | "normal" | "hard";
+  embedding: number[];
+  id: number;
+  is_paid: boolean;
+  is_liked: boolean;
+  learners_count: number;
+  price: number | null;
+  rating: number;
+  similarity: number;
+  stepik_id: number;
+  summary: string;
+  tags: string[];
+  title: string;
+  updated_at: string;
+  url: string;
 }

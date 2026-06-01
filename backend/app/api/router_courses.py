@@ -23,6 +23,7 @@ from services.personalization import (
     personalize_courses,
 )
 from services.query_understanding import QueryIntent, understand_query
+
 router = APIRouter(prefix="/api/courses", tags=["Courses"])
 
 RAG_MATCH_THRESHOLDS = [0.55, 0.45, 0.35]
@@ -130,7 +131,8 @@ def match_courses_with_fallback(query_embedding: list, match_count: int):
 
 def get_markov_seed_tags(courses: list[dict], query_intent: QueryIntent | None, top_k: int = 3) -> list[str]:
     query_tags = list(query_intent.tags if query_intent else [])
-    query_specific_tags = [tag for tag in (query_intent.primary_tags if query_intent else []) if tag not in BASE_MARKOV_TAGS]
+    query_specific_tags = [tag for tag in (query_intent.primary_tags if query_intent else []) if
+                           tag not in BASE_MARKOV_TAGS]
     if not query_specific_tags:
         query_specific_tags = [tag for tag in query_tags if tag not in BASE_MARKOV_TAGS]
 
@@ -177,9 +179,6 @@ def get_markov_next_tags(current_tags: list, top_k: int = 2) -> list:
     return [tag for tag, score in sorted_steps[:top_k]]
 
 
-
-
-
 @router.get("/recommend/baseline")
 def get_recommend_baseline(
         user_id: str = Depends(get_current_user_id),
@@ -196,16 +195,18 @@ def get_recommend_baseline(
         used_topics = []
         for goal in goals[:2]:
             goal = goal.capitalize()
-            query = supabase.table("courses").select("id","title","url","difficulty","tags","is_paid","price","learners_count")
-            query = query.contains("tags", [goal]).eq("difficulty","easy")
-            response = query.order("learners_count",desc=True).limit(3).execute()
+            query = supabase.table("courses").select("id", "title", "url", "difficulty", "tags", "is_paid", "price",
+                                                     "learners_count")
+            query = query.contains("tags", [goal]).eq("difficulty", "easy")
+            response = query.order("learners_count", desc=True).limit(3).execute()
             if response.data:
                 recommendations.extend(response.data)
                 used_topics.append(f"Цель: {goal} (easy)")
 
         for skill, skill_level in list(skills.items())[:2]:
             target_diff = preferred_course_difficulty(skill_level)
-            query = supabase.table("courses").select("id","title","url","difficulty","tags","is_paid","price","learners_count")
+            query = supabase.table("courses").select("id", "title", "url", "difficulty", "tags", "is_paid", "price",
+                                                     "learners_count")
             query = query.contains("tags", [skill]).eq("difficulty", target_diff)
             response = query.order("learners_count", desc=True).limit(3).execute()
             if response.data:
@@ -213,7 +214,8 @@ def get_recommend_baseline(
                 used_topics.append(f"Прокачка: {skill} ({target_diff})")
         recommendations = filter_courses_for_user_skills(recommendations, skills)
         if len(recommendations) < limit:
-            query = supabase.table("courses").select("id","title", "url", "difficulty", "tags", "is_paid", "price", "learners_count")
+            query = supabase.table("courses").select("id", "title", "url", "difficulty", "tags", "is_paid", "price",
+                                                     "learners_count")
             query = query.order("learners_count", desc=True).limit(limit * 5).execute()
             recommendations.extend(filter_courses_for_user_skills(query.data or [], skills))
             used_topics.append("Общая популярность")
@@ -324,7 +326,7 @@ def get_advanced_recommendations(
         next_tags = filtered_next_tags
         next_step_courses = []
         if next_tags:
-            markov_query = supabase.table("courses").select("id, title, url, difficulty, learners_count, tags")\
+            markov_query = supabase.table("courses").select("id, title, url, difficulty, learners_count, tags") \
                 .neq("id", anchor_course["id"])
             top_next_tag = next_tags[0]
             markov_response = markov_query.contains("tags", [top_next_tag]) \
@@ -414,3 +416,4 @@ def get_courses_catalog(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

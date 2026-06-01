@@ -1,20 +1,30 @@
 .theme-button {
-  top: 1.5rem;
-  right: 1.5rem;
-  padding: 0.5rem;
-  border-radius: 100%;
+  width: 2.5rem;
+  height: 2.5rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.1s ease;
+
+  padding: 0;
+  border-radius: 9999px;
   background: transparent;
   border: none;
   cursor: pointer;
-  
-  color: light-dark(#64748b, #94a3b8);
-  transition: background-color 0.2s, color 0.2s;
+
+  color: var(--app-text-soft);
 }
 
 .theme-button:hover {
-  background-color: light-dark(#e2e8f0, #1e293b);
+  background-color: var(--app-surface-muted);
+  color: var(--app-accent-text);
 }
 
+.theme-button:active {
+  transform: scale(0.96);
+}
 .theme-button svg {
   width: 1.25rem;
   height: 1.25rem;

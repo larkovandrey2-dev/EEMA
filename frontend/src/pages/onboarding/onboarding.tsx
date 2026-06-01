@@ -5,12 +5,12 @@ import "./onboarding.css";
 const Onboarding = () => {
   return (
     <div className="onboarding-page">
-    <div className="onboarding-container">
+      <div className="onboarding-container">
         <div className="theme-block">
           <ThemeButton/>
         </div>
         <h1 className="brand-title">EEMA</h1>
-        <p className="page-subtitle">Что умеешь?</p> 
+        <p className="page-subtitle">Что умеешь?</p>
         <div className="legend">
           <p className="legend-text">Выбери технологии и укажи свой уровень</p>
           <div className="legend-items">
@@ -19,10 +19,10 @@ const Onboarding = () => {
             <span className="legend-item"><span className="legend-dot dot-high"/> Высокий</span>
           </div>
         </div>
-        <SkillForm />    
+        <SkillForm />
       </div>
     </div>
   );
-}
+};
 
 export default Onboarding;
