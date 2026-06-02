@@ -3,6 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ThemeButton } from "../../shared";
 import { auth } from "../../shared/api/auth";
+import { getApiErrorMessage } from "../../shared/api/utils/error";
 import "../registration/registration.css";
 
 const AuthPage = () => {
@@ -21,8 +22,8 @@ const AuthPage = () => {
     try {
       await auth.login({ email, password });
       navigate("/", { replace: true });
-    } catch {
-      setErrorMessage("Неправильная почта или пароль.");
+    } catch (e) {
+      setErrorMessage(getApiErrorMessage(e, "Неправильная почта или пароль."));
     } finally {
       setLoading(false);
     }
@@ -81,6 +82,7 @@ const AuthPage = () => {
                 clearError();
               }}
               autoComplete="current-password"
+              minLength={6}
               aria-invalid={!!errorMessage}
               required
             />

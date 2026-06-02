@@ -11,6 +11,7 @@ const RegistrationPage = () => {
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [registrationComplete, setRegistrationComplete] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const navigate = useNavigate();
 
@@ -21,8 +22,8 @@ const RegistrationPage = () => {
 
     try {
       await auth.register({ email, password });
-      await auth.login({ email, password });
-      navigate("/", { replace: true });
+      setPassword("");
+      setRegistrationComplete(true);
     } catch (e) {
       setErrorMessage(
         getApiErrorMessage(
@@ -40,6 +41,53 @@ const RegistrationPage = () => {
       setErrorMessage("");
     }
   };
+
+  if (registrationComplete) {
+    return (
+      <div className="auth-wrapper">
+        <div className="auth-container">
+          <div className="auth-top">
+            <ThemeButton />
+          </div>
+
+          <div className="auth-form">
+            <div className="auth-brand">
+              <div className="auth-logo">E</div>
+              <div>
+                <p className="auth-kicker">EEMA</p>
+                <h1 className="auth-welcome">Проверьте почту</h1>
+                <p className="auth-description">
+                  Мы отправили письмо для подтверждения аккаунта на {email}.
+                  После подтверждения можно будет войти в EEMA.
+                </p>
+              </div>
+            </div>
+
+            <div className="auth-success" role="status">
+              Если письма нет, проверьте папку спам или попробуйте
+              зарегистрироваться ещё раз через пару минут.
+            </div>
+
+            <button
+              type="button"
+              className="auth-button"
+              onClick={() => navigate("/auth")}
+            >
+              Перейти ко входу
+            </button>
+
+            <button
+              type="button"
+              className="auth-switch"
+              onClick={() => setRegistrationComplete(false)}
+            >
+              Изменить почту
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-wrapper">
@@ -88,6 +136,7 @@ const RegistrationPage = () => {
                 clearError();
               }}
               autoComplete="new-password"
+              minLength={6}
               aria-invalid={!!errorMessage}
               required
             />
