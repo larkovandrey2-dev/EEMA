@@ -1,65 +1,128 @@
-import React from "react"
-import { auth } from "../../shared/api/auth";
-import { useNavigate } from "react-router-dom"
-import "./registration.css"
+import React from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { ThemeButton } from "../../shared";
+import { auth } from "../../shared/api/auth";
+import { getApiErrorMessage } from "../../shared/api/utils/error";
+import "./registration.css";
 
 const RegistrationPage = () => {
-    const [email, setEmail] = React.useState("")
-    const [password, setPassword] = React.useState("")
-    const [loading, setLoading] = React.useState(false)
-    const navigate = useNavigate()
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
+  const navigate = useNavigate();
 
-    const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
-        setLoading(true);
-        try{
-            await auth.register({email, password})
-            await auth.login({email, password})
-            navigate("/", { replace: true })
-        } catch (e) {
-            console.log("login error", e)
-        } finally {
-            setLoading(false)
-        }
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setErrorMessage("");
+    setLoading(true);
+
+    try {
+      await auth.register({ email, password });
+      await auth.login({ email, password });
+      navigate("/", { replace: true });
+    } catch (e) {
+      setErrorMessage(
+        getApiErrorMessage(
+          e,
+          "Не удалось зарегистрироваться. Проверьте почту и пароль."
+        )
+      );
+    } finally {
+      setLoading(false);
     }
-    return (
+  };
+
+  const clearError = () => {
+    if (errorMessage) {
+      setErrorMessage("");
+    }
+  };
+
+  return (
     <div className="auth-wrapper">
-    <div className="auth-container">
+      <div className="auth-container">
         <div className="auth-top">
-            <ThemeButton></ThemeButton>
+          <ThemeButton />
         </div>
+
         <form onSubmit={handleSubmit} className="auth-form">
-            <h2 className="auth-title">Регистрация</h2>
+          <div className="auth-brand">
+            <div className="auth-logo">E</div>
+            <div>
+              <p className="auth-kicker">EEMA</p>
+              <h1 className="auth-welcome">Добро пожаловать в EEMA</h1>
+              <p className="auth-description">
+                Создайте аккаунт, чтобы сохранить профиль навыков и получать
+                персональные рекомендации.
+              </p>
+            </div>
+          </div>
 
+          <h2 className="auth-title">Регистрация</h2>
+
+          <input
+            className="auth-input"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(event) => {
+              setEmail(event.target.value);
+              clearError();
+            }}
+            autoComplete="email"
+            aria-invalid={!!errorMessage}
+            required
+          />
+
+          <div className="auth-password-field">
             <input
-                className="auth-input"
-                type="text"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+              className="auth-input auth-password-input"
+              type={showPassword ? "text" : "password"}
+              placeholder="Пароль"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                clearError();
+              }}
+              autoComplete="new-password"
+              aria-invalid={!!errorMessage}
+              required
             />
-
-            <input
-                className="auth-input"
-                type="password"
-                placeholder="Пароль"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />      
-            <button type="submit" className="auth-button" disabled={loading}>
-                Зарегистрироваться
-            </button>
             <button
+              type="button"
+              className="auth-password-toggle"
+              onClick={() => setShowPassword((current) => !current)}
+              aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+              aria-pressed={showPassword}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          {errorMessage && (
+            <div className="auth-error" role="alert">
+              {errorMessage}
+            </div>
+          )}
+
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? "Создаем аккаунт..." : "Зарегистрироваться"}
+          </button>
+
+          <button
             type="button"
             className="auth-switch"
-            onClick={() => navigate('/auth')}
-            >
+            onClick={() => navigate("/auth")}
+          >
             Авторизация
-            </button>
+          </button>
         </form>
+      </div>
     </div>
-    </div>
-    );
-}
-export default RegistrationPage
+  );
+};
+
+export default RegistrationPage;
